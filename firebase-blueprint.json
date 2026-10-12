@@ -1,0 +1,54 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Gamer profile credentials, chosen username, and authentication info",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique user ID strictly matching request.auth.uid",
+          "maxLength": 128
+        },
+        "username": {
+          "type": "string",
+          "description": "Chosen unique gamer tag / username in Nexus",
+          "minLength": 2,
+          "maxLength": 32
+        },
+        "email": {
+          "type": "string",
+          "description": "Account email address",
+          "maxLength": 128
+        },
+        "avatar": {
+          "type": "string",
+          "description": "User profile avatar image URL",
+          "maxLength": 512
+        },
+        "provider": {
+          "type": "string",
+          "description": "Authentication provider (google.com, facebook.com, password)",
+          "maxLength": 32
+        },
+        "status": {
+          "type": "string",
+          "description": "Current activity status",
+          "enum": ["online", "idle", "dnd", "offline"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Account creation timestamp string",
+          "maxLength": 64
+        }
+      },
+      "required": ["id", "username", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of user gamer profiles and credentials"
+    }
+  }
+}

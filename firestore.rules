@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUser(data) {
+      return data.id is string && data.id.size() <= 128 && data.id == request.auth.uid &&
+             data.username is string && data.username.size() >= 2 && data.username.size() <= 32 &&
+             data.status is string && data.status in ['online', 'idle', 'dnd', 'offline'] &&
+             (!('email' in data) || (data.email is string && data.email.size() <= 128)) &&
+             (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 512)) &&
+             (!('provider' in data) || (data.provider is string && data.provider.size() <= 32)) &&
+             (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64));
+    }
+
+    // Users Collection
+    // Read: Allowed so email check and gamer profile lookups can succeed
+    // Create/Update: Strictly restricted to the authenticated document owner matching auth UID
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming()) && incoming().id == existing().id;
+      allow delete: if false;
+    }
+
+    // Test connection doc
+    match /test/{docId} {
+      allow read: if true;
+    }
+  }
+}

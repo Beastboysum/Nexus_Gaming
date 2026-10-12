@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#09090b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script>
+      (function() {
+        // 1. Intercept console.error and console.warn to suppress Vite HMR WebSocket connection failure noise
+        var origError = console.error;
+        console.error = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var msg = args.map(function(a) {
+            return (a && (a.message || a.stack || String(a))) || '';
+          }).join(' ');
+          if (
+            msg.indexOf('WebSocket closed without opened') !== -1 ||
+            msg.indexOf('failed to connect to websocket') !== -1 ||
+            (msg.indexOf('[vite]') !== -1 && (msg.indexOf('websocket') !== -1 || msg.indexOf('WebSocket') !== -1))
+          ) {
+            return;
+          }
+          return origError.apply(console, arguments);
+        };
+
+        var origWarn = console.warn;
+        console.warn = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var msg = args.map(function(a) {
+            return (a && (a.message || a.stack || String(a))) || '';
+          }).join(' ');
+          if (
+            msg.indexOf('WebSocket closed without opened') !== -1 ||
+            msg.indexOf('failed to connect to websocket') !== -1
+          ) {
+            return;
+          }
+          return origWarn.apply(console, arguments);
+        };
+
+        // 2. Intercept unhandled errors and rejections
+        window.addEventListener('unhandledrejection', function(event) {
+          var reason = event && event.reason;
+          var msg = (reason && (reason.message || String(reason))) || '';
+          if (msg.indexOf('WebSocket') !== -1 || msg.indexOf('websocket') !== -1) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        });
+        window.addEventListener('error', function(event) {
+          var msg = (event && (event.message || '')) || '';
+          if (msg.indexOf('WebSocket') !== -1 || msg.indexOf('websocket') !== -1) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        });
+
+        // 3. Graceful WebSocket stub for Vite HMR in the preview/iframe environment
+        if (typeof window !== 'undefined' && window.WebSocket) {
+          var NativeWebSocket = window.WebSocket;
+          window.WebSocket = function(url, protocols) {
+            var isViteHmr = false;
+            if (typeof url === 'string') {
+              if (url.indexOf('vite') !== -1 || url.indexOf('hmr') !== -1) isViteHmr = true;
+            }
+            if (protocols === 'vite-hmr' || (protocols && String(protocols).indexOf('vite') !== -1)) {
+              isViteHmr = true;
+            }
+
+            if (isViteHmr) {
+              // Benign virtual WebSocket that remains quietly open
+              var dummy = {
+                binaryType: 'blob',
+                bufferedAmount: 0,
+                extensions: '',
+                protocol: protocols || 'vite-hmr',
+                readyState: 1, // OPEN
+                url: url,
+                onopen: null,
+                onmessage: null,
+                onerror: null,
+                onclose: null,
+                send: function() {},
+                close: function() {},
+                addEventListener: function(type, fn) {
+                  if (type === 'open') setTimeout(function() { fn({ type: 'open' }); }, 20);
+                },
+                removeEventListener: function() {},
+                dispatchEvent: function() { return true; }
+              };
+              setTimeout(function() {
+                if (typeof dummy.onopen === 'function') {
+                  dummy.onopen({ type: 'open' });
+                }
+              }, 20);
+              return dummy;
+            }
+
+            return new NativeWebSocket(url, protocols);
+          };
+
+          window.WebSocket.prototype = NativeWebSocket.prototype;
+          window.WebSocket.CONNECTING = NativeWebSocket.CONNECTING;
+          window.WebSocket.OPEN = NativeWebSocket.OPEN;
+          window.WebSocket.CLOSING = NativeWebSocket.CLOSING;
+          window.WebSocket.CLOSED = NativeWebSocket.CLOSED;
+        }
+      })();
+    </script>
+    <title>Nexus Gaming Hub</title>
+    <meta name="description" content="A comprehensive gaming dashboard featuring Discord-like voice chat, social feeds, task gamification, and advanced analytics with a playful interactive mascot." />
+    <meta property="og:title" content="Nexus Gaming Hub" />
+    <meta property="og:description" content="A comprehensive gaming dashboard featuring Discord-like voice chat, social feeds, task gamification, and advanced analytics with a playful interactive mascot." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: '#0f1014',
+              surface: '#1e1f24',
+              primary: '#8b5cf6',
+            },
+            animation: {
+              'spin-slow': 'spin 3s linear infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+            },
+            keyframes: {
+              shimmer: {
+                '0%': { backgroundPosition: '0 0' },
+                '100%': { backgroundPosition: '40px 0' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        background-color: #09090b;
+        overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
+      }
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .no-scrollbar::-webkit-scrollbar {
+          display: none;
+      }
+      /* Hide scrollbar for IE, Edge and Firefox */
+      .no-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "recharts": "https://esm.sh/recharts@^3.7.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

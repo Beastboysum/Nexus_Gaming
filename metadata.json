@@ -1,0 +1,8 @@
+{
+  "name": "Nexus Gaming Hub",
+  "description": "A comprehensive gaming dashboard featuring Discord-like voice chat, social feeds, task gamification, and advanced analytics with a playful interactive mascot.",
+  "requestFramePermissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
