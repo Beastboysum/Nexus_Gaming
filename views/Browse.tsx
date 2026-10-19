@@ -1,7 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Volume2, VolumeX, Maximize, Settings, User, MoreVertical, Heart, Signal, Eye, Gamepad2, Mic, Music, Trophy, Search, Filter, X, MessageCircle, Share2, ThumbsUp, CheckCircle2, Sparkles, Video, Radio } from 'lucide-react';
+import { 
+  Play, Pause, Volume2, VolumeX, Maximize, Settings, User, MoreVertical, 
+  Heart, Signal, Eye, Gamepad2, Mic, Music, Trophy, Search, Filter, X, 
+  MessageCircle, Share2, ThumbsUp, CheckCircle2, Sparkles, Video, Radio, 
+  Star, Rocket, Tv, Users, Bell, ShieldCheck, Loader2
+} from 'lucide-react';
 import { SocialFeedSection } from '../components/SocialFeedSection';
 import { playCategorizedAudio, getEffectiveVolume } from '../services/audioManager';
+import { VideoPlayerModal } from '../components/VideoPlayerModal';
+import { PersonalizedVideoShelf } from '../components/PersonalizedVideoShelf';
+import { ChannelProfileModal } from '../components/ChannelProfileModal';
+import { isJuniorModeEnabled } from '../services/juniorModeContext';
+import { 
+  trackSearch, getPersonalizedRecommendations, VIDEO_CATALOG, 
+  getVideoThumbnail, parseMediaStreamUrl, createProjectedVideo 
+} from '../services/recommendationEngine';
+import { CREATOR_DIRECTORY, searchLocalCreators } from '../services/creatorDirectory';
+import { ScoredVideo, CreatorChannel, VideoPost } from '../types';
 
 // --- Mock Data ---
 
@@ -14,76 +29,152 @@ const CATEGORIES = [
 ];
 
 const FEATURED_STREAM = {
-  id: 'featured-1',
-  title: 'GRAND FINALS: T1 vs GEN.G',
+  id: 'featured-lck',
+  title: 'GRAND FINALS: T1 vs GEN.G - LCK Official Championship',
   streamer: 'LCK Official',
   channel: 'LCK Official',
   game: 'League of Legends',
   viewers: '245K',
   avatar: 'https://picsum.photos/100/100?random=88',
-  thumbnail: 'https://picsum.photos/1920/1080?random=99',
-  duration: 'LIVE'
+  thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop',
+  duration: 'LIVE',
+  sourceType: 'twitch',
+  twitchChannel: 'riotgames'
 };
 
 const LIVE_CHANNELS = [
   { 
-    id: '101', 
+    id: 'live-tenz', 
     streamer: 'TenZ', 
-    title: 'RANK 1 GRIND! !sens !crosshair', 
+    title: 'RANK 1 GRIND! Valorant Radiant Masterclass', 
     game: 'Valorant', 
     viewers: '42.5K', 
-    tags: ['English', 'Pro'],
+    tags: ['English', 'Pro', 'FPS'],
     avatar: 'https://picsum.photos/50/50?random=101',
-    thumbnail: 'https://picsum.photos/400/225?random=101'
+    thumbnail: 'https://images.unsplash.com/photo-1624138784180-48145465d61f?q=80&w=400&auto=format&fit=crop',
+    sourceType: 'youtube',
+    youtubeId: 'j6rF0_3s4tE'
   },
   { 
-    id: '102', 
-    streamer: 'Kyedae', 
-    title: 'Cooking stream + Valo later', 
-    game: 'Just Chatting', 
-    viewers: '12.1K', 
-    tags: ['English', 'Cooking'],
-    avatar: 'https://picsum.photos/50/50?random=102',
-    thumbnail: 'https://picsum.photos/400/225?random=102'
-  },
-  { 
-    id: '103', 
+    id: 'live-tarik', 
     streamer: 'Tarik', 
-    title: 'WATCH PARTY VCT AMERICAS', 
+    title: 'VCT AMERICAS WATCH PARTY & HIGH ELO', 
     game: 'Valorant', 
     viewers: '85.3K', 
     tags: ['Esports', 'Watch Party'],
     avatar: 'https://picsum.photos/50/50?random=103',
-    thumbnail: 'https://picsum.photos/400/225?random=103'
+    thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400&auto=format&fit=crop',
+    sourceType: 'twitch',
+    twitchChannel: 'tarik'
+  },
+  { 
+    id: 'live-minecraft', 
+    streamer: 'Minecraft Live', 
+    title: 'Minecraft World Championship Live Showcase', 
+    game: 'Minecraft', 
+    viewers: '68.1K', 
+    tags: ['Creative', 'Tournament', 'Kids'],
+    avatar: 'https://picsum.photos/50/50?random=104',
+    thumbnail: 'https://images.unsplash.com/photo-1607677914754-58a36d240214?q=80&w=400&auto=format&fit=crop',
+    sourceType: 'twitch',
+    twitchChannel: 'minecraft'
   }
 ];
 
 const VIDEOS = [
-  { id: '201', title: 'I Spent 100 Days in Hardcore Minecraft', channel: 'ForgeLabs', views: '5.2M', time: '2 days ago', duration: '45:10', thumbnail: 'https://picsum.photos/400/225?random=201', avatar: 'https://picsum.photos/50/50?random=50' },
-  { id: '202', title: 'The STATE of Overwatch 2', channel: 'Seagull', views: '890K', time: '5 hours ago', duration: '12:05', thumbnail: 'https://picsum.photos/400/225?random=202', avatar: 'https://picsum.photos/50/50?random=51' },
-  { id: '203', title: 'Elden Ring DLC is HARD', channel: 'MoistCr1TiKaL', views: '2.1M', time: '1 day ago', duration: '18:30', thumbnail: 'https://picsum.photos/400/225?random=203', avatar: 'https://picsum.photos/50/50?random=52' },
-  { id: '204', title: 'Top 10 Valorant Plays of the Week', channel: 'Protatomonster', views: '350K', time: '3 days ago', duration: '10:01', thumbnail: 'https://picsum.photos/400/225?random=204', avatar: 'https://picsum.photos/50/50?random=53' },
-  { id: '205', title: 'Building a PC in 2024', channel: 'Linus Tech Tips', views: '1.5M', time: '1 day ago', duration: '22:15', thumbnail: 'https://picsum.photos/400/225?random=205', avatar: 'https://picsum.photos/50/50?random=54' },
-  { id: '206', title: 'Speedrun World Record', channel: 'Summoning Salt', views: '3.2M', time: '1 week ago', duration: '45:00', thumbnail: 'https://picsum.photos/400/225?random=206', avatar: 'https://picsum.photos/50/50?random=55' },
-  { id: '207', title: 'Why I Quit League', channel: 'Tyler1', views: '800K', time: '2 hours ago', duration: '08:45', thumbnail: 'https://picsum.photos/400/225?random=207', avatar: 'https://picsum.photos/50/50?random=56' },
-  { id: '208', title: 'Reacting to Your Setups', channel: 'RandomFrankP', views: '450K', time: '4 days ago', duration: '15:20', thumbnail: 'https://picsum.photos/400/225?random=208', avatar: 'https://picsum.photos/50/50?random=57' },
+  { id: '201', title: 'I Spent 100 Days in Mega Treehouse Minecraft', channel: 'BlockMaster Tim', views: '5.2M', time: '2 days ago', duration: '18:45', thumbnail: 'https://images.unsplash.com/photo-1607677914754-58a36d240214?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=50', sourceType: 'youtube', youtubeId: 'W_7LqXj2C70' },
+  { id: '202', title: 'Escape The Giant Rainbow Lava Obby!', channel: 'RainbowGamer Squad', views: '3.2M', time: '1 day ago', duration: '12:20', thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=51', sourceType: 'youtube', youtubeId: 'kJQP7kiw5Fk' },
+  { id: '203', title: 'Super Mario Wonder - All Hidden Wonder Seeds', channel: 'NintendoNerd Joy', views: '1.9M', time: '3 days ago', duration: '15:10', thumbnail: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=52', sourceType: 'youtube', youtubeId: 'J3_A0-4H-pA' },
+  { id: '204', title: 'Top 50 Satisfying Rocket League Aerial Goals', channel: 'TurboBoost TV', views: '1.5M', time: '4 days ago', duration: '09:50', thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=53', sourceType: 'youtube', youtubeId: 'lq7eB84fX_M' },
+  { id: '205', title: 'Building the Ultimate Dream Gaming Setup 2026', channel: 'SetupWars', views: '1.8M', time: '1 day ago', duration: '19:40', thumbnail: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=54', sourceType: 'youtube', youtubeId: 'BL4DCEp7blY' },
+  { id: '206', title: 'Shadow of the Erdtree - All Secret Boss Locations', channel: 'VaatiVid', views: '3.1M', time: '5 days ago', duration: '35:40', thumbnail: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=55', sourceType: 'youtube', youtubeId: 'h8qT1-t-PBs' },
+  { id: '207', title: 'Minecraft World Record Speedrun Explained', channel: 'SpeedrunCentral', views: '2.8M', time: '2 hours ago', duration: '14:22', thumbnail: 'https://images.unsplash.com/photo-1579202673506-ca3ce28943ef?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=56', sourceType: 'youtube', youtubeId: 'rV3bZl68y1s' },
+  { id: '208', title: 'Funniest Gaming Fails & Instant Karma Moments', channel: 'ClutchKarma', views: '5.6M', time: '3 days ago', duration: '13:55', thumbnail: 'https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=57', sourceType: 'youtube', youtubeId: '9y4f_Q28Z_w' },
 ];
 
 export const BrowseView: React.FC = () => {
   const [browseSection, setBrowseSection] = useState<'streams' | 'social'>('streams');
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
+  const [selectedChannel, setSelectedChannel] = useState<CreatorChannel | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [aiChannels, setAiChannels] = useState<CreatorChannel[]>([]);
+  const [aiVideos, setAiVideos] = useState<any[]>([]);
+  const [aiSearchLoading, setAiSearchLoading] = useState<boolean>(false);
   
   // Player State
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(80);
   const [progress, setProgress] = useState(0);
 
+  const [isJunior, setIsJunior] = useState<boolean>(isJuniorModeEnabled());
+  const [recommendedVideos, setRecommendedVideos] = useState<ScoredVideo[]>(() => getPersonalizedRecommendations(12, isJuniorModeEnabled()));
+
   // Interaction State
   const [likes, setLikes] = useState(125000);
   const [isLiked, setIsLiked] = useState(false);
+
+  // Sync Recommendation Engine & Junior Mode
+  useEffect(() => {
+    const syncAlgo = () => {
+      const junior = isJuniorModeEnabled();
+      setIsJunior(junior);
+      setRecommendedVideos(getPersonalizedRecommendations(12, junior));
+    };
+    window.addEventListener('nexus_recommendations_updated', syncAlgo);
+    window.addEventListener('nexus_junior_mode_changed', syncAlgo);
+    return () => {
+      window.removeEventListener('nexus_recommendations_updated', syncAlgo);
+      window.removeEventListener('nexus_junior_mode_changed', syncAlgo);
+    };
+  }, []);
+
+  // Track search terms into recommendation algorithm & trigger live AI media discovery
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2) {
+      const timer = setTimeout(() => {
+        trackSearch(searchQuery);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [searchQuery]);
+
+  // Live AI-grounded YouTube and Twitch search
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setAiChannels([]);
+      setAiVideos([]);
+      setAiSearchLoading(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        setAiSearchLoading(true);
+        const res = await fetch('/api/search-media', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: searchQuery.trim(), juniorMode: isJunior })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.channels)) {
+            setAiChannels(data.channels);
+          }
+          if (Array.isArray(data.videos)) {
+            setAiVideos(data.videos);
+          }
+        }
+      } catch (err) {
+        console.warn('Live search media error:', err);
+      } finally {
+        setAiSearchLoading(false);
+      }
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, isJunior]);
 
   // Ambient Music State
   const [isAmbientMusic, setIsAmbientMusic] = useState(false);
@@ -120,12 +211,31 @@ export const BrowseView: React.FC = () => {
   const handleVideoClick = (video: any) => {
     // Play generic click sound
     playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-click-901.mp3', 'system', 0.5);
-    setSelectedVideo(video);
+
+    const enrichedVideo = {
+      id: video.id || `browse-${Date.now()}`,
+      title: video.title,
+      author: video.channel || video.streamer || video.author || 'Nexus Creator',
+      views: video.views || video.viewers || '1.2M',
+      duration: video.duration || 'LIVE',
+      category: video.game || video.category || 'Gaming',
+      tags: video.tags || ['Gaming', 'Stream'],
+      thumbnail: video.thumbnail || (video.youtubeId ? `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg` : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop'),
+      channelAvatar: video.avatar || video.channelAvatar,
+      sourceType: video.sourceType || (video.twitchChannel ? 'twitch' : 'youtube'),
+      youtubeId: video.youtubeId || (video.sourceType === 'youtube' ? video.id : undefined),
+      twitchChannel: video.twitchChannel,
+      videoUrl: video.videoUrl,
+      likes: video.likes || Math.floor(Math.random() * 500000) + 10000,
+      kidFriendly: isJunior
+    };
+
+    setSelectedVideo(enrichedVideo);
     setIsPlaying(true);
-    setProgress(15); // Fake start progress
+    setProgress(15);
 
     // Reset interaction state for new video
-    setLikes(Math.floor(Math.random() * 500000) + 10000);
+    setLikes(enrichedVideo.likes);
     setIsLiked(false);
   };
 
@@ -151,43 +261,102 @@ export const BrowseView: React.FC = () => {
     }
   };
 
+  // Search Results: Channel and Video matching
+  const trimmedSearch = searchQuery.trim().toLowerCase();
+  const localMatchedChannels = trimmedSearch ? searchLocalCreators(searchQuery, isJunior) : [];
+  const allMatchedChannels = [...localMatchedChannels];
+  aiChannels.forEach(aiChan => {
+    if (!allMatchedChannels.some(c => c.id.toLowerCase() === aiChan.id.toLowerCase() || c.name.toLowerCase() === aiChan.name.toLowerCase())) {
+      allMatchedChannels.push(aiChan);
+    }
+  });
+
   const filteredLiveChannels = LIVE_CHANNELS.filter(channel => 
-    channel.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    channel.streamer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    channel.game.toLowerCase().includes(searchQuery.toLowerCase())
+    channel.title.toLowerCase().includes(trimmedSearch) ||
+    channel.streamer.toLowerCase().includes(trimmedSearch) ||
+    channel.game.toLowerCase().includes(trimmedSearch)
   );
 
-  const filteredVideos = VIDEOS.filter(video => 
-    video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    video.channel.toLowerCase().includes(searchQuery.toLowerCase())
+  const localFilteredVideos = VIDEOS.filter(video => 
+    video.title.toLowerCase().includes(trimmedSearch) ||
+    video.channel.toLowerCase().includes(trimmedSearch)
   );
 
-  const hasResults = filteredLiveChannels.length > 0 || filteredVideos.length > 0;
+  // Search through global VIDEO_CATALOG
+  const catalogFilteredVideos = VIDEO_CATALOG.filter(video => {
+    if (isJunior && !video.kidFriendly) return false;
+    const titleHit = video.title.toLowerCase().includes(trimmedSearch);
+    const authorHit = video.author.toLowerCase().includes(trimmedSearch);
+    const catHit = video.category?.toLowerCase().includes(trimmedSearch);
+    const tagHit = video.tags?.some(t => t.toLowerCase().includes(trimmedSearch));
+    return titleHit || authorHit || catHit || tagHit;
+  });
 
-  const TRENDING_SEARCHES = ['Valorant Champions', 'Minecraft Speedrun', 'LCK Finals', 'Elden Ring DLC', 'ASMR Cooking'];
+  // Check if search query is a direct YouTube/Twitch URL or video ID
+  const directStreamParsed = trimmedSearch.length >= 8 ? parseMediaStreamUrl(searchQuery.trim()) : null;
+  const directProjected = (directStreamParsed && (directStreamParsed.sourceType === 'youtube' || directStreamParsed.sourceType === 'twitch'))
+    ? [createProjectedVideo(searchQuery.trim(), undefined, isJunior)]
+    : [];
+
+  // Collect videos from matched channels
+  const channelVideos = allMatchedChannels.flatMap(c => c.videos || []);
+  const allSearchVideos: any[] = [...directProjected];
+
+  // Helper to deduplicate and attach original thumbnail
+  const addVideoIfNotPresent = (v: any) => {
+    const yId = v.youtubeId || (v.sourceType === 'youtube' ? v.id : undefined);
+    const thumb = getVideoThumbnail({
+      thumbnail: v.thumbnail,
+      youtubeId: yId,
+      sourceType: v.sourceType,
+      twitchChannel: v.twitchChannel
+    });
+    const enriched = {
+      ...v,
+      thumbnail: thumb,
+      youtubeId: yId,
+      author: v.author || v.channel || v.streamer || 'Nexus Creator'
+    };
+    if (!allSearchVideos.some(existing => (existing.youtubeId && existing.youtubeId === yId) || existing.id === v.id || existing.title === v.title)) {
+      allSearchVideos.push(enriched);
+    }
+  };
+
+  catalogFilteredVideos.forEach(addVideoIfNotPresent);
+  channelVideos.forEach(addVideoIfNotPresent);
+  localFilteredVideos.forEach(addVideoIfNotPresent);
+  aiVideos.forEach(addVideoIfNotPresent);
+
+  const hasResults = allMatchedChannels.length > 0 || filteredLiveChannels.length > 0 || allSearchVideos.length > 0;
+
+  const TRENDING_SEARCHES = [
+    'MrBeast', 'DanTDM', 'PewDiePie', 'Kai Cenat', 'TenZ', 'Tarik', 
+    'Ninja', 'Aphmau', 'Shroud', 'Minecraft 100 Days', 'Elden Ring DLC', 
+    'Linus Tech Tips', 'Roblox Obby'
+  ];
 
   return (
     <div className="h-full flex flex-col bg-[#0f1014] text-white overflow-y-auto custom-scrollbar">
       
       {/* --- Search Bar Section --- */}
-      <div className="sticky top-0 z-40 bg-[#0f1014]/80 backdrop-blur-xl border-b border-white/5 p-4">
+      <div className="sticky top-0 z-40 bg-[#0f1014]/80 backdrop-blur-xl border-b border-white/5 p-2.5 xs:p-3 sm:p-4">
         <div className="max-w-4xl mx-auto relative group">
-            <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isSearching ? 'text-purple-500' : 'text-slate-500'}`} size={20} />
+            <Search className={`absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 w-4 h-4 sm:w-5 sm:h-5 ${isSearching ? 'text-purple-500' : 'text-slate-500'}`} />
             <input 
                 type="text"
-                placeholder="Search for streams, videos, or gamers..."
+                placeholder="Search streams, videos, gamers..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearching(true)}
                 onBlur={() => !searchQuery && setIsSearching(false)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all placeholder:text-slate-600"
+                className="w-full bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl py-2 xs:py-2.5 sm:py-3 pl-9 sm:pl-12 pr-9 sm:pr-12 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:bg-white/10 transition-all placeholder:text-slate-600"
             />
             {searchQuery && (
                 <button 
                     onClick={() => { setSearchQuery(''); setIsSearching(false); }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-full transition-colors"
+                    className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-full transition-colors"
                 >
-                    <X size={16} className="text-slate-400" />
+                    <X size={15} className="text-slate-400" />
                 </button>
             )}
         </div>
@@ -257,42 +426,43 @@ export const BrowseView: React.FC = () => {
         ) : (
         <>
           {/* --- Featured Hero Section (Twitch Style) --- */}
-      <div className="relative w-full h-[400px] md:h-[500px] shrink-0 group">
+      <div className="relative w-full h-[260px] xs:h-[320px] sm:h-[400px] md:h-[500px] shrink-0 group">
          <div className="absolute inset-0 bg-gradient-to-t from-[#0f1014] via-transparent to-transparent z-10"></div>
          <img src={FEATURED_STREAM.thumbnail} className="w-full h-full object-cover opacity-80" alt="Featured" />
          
          {/* Magical Ambience Toggle */}
          <button 
             onClick={toggleAmbientMusic}
-            className={`absolute top-6 right-6 z-30 flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md border transition-all duration-300
+            className={`absolute top-3 right-3 sm:top-6 sm:right-6 z-30 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full backdrop-blur-md border transition-all duration-300
                 ${isAmbientMusic 
                     ? 'bg-purple-600/80 border-purple-400 text-white shadow-[0_0_20px_rgba(168,85,247,0.6)]' 
                     : 'bg-black/40 border-white/10 text-slate-300 hover:bg-black/60 hover:text-white'}
             `}
          >
-             <Sparkles size={16} className={isAmbientMusic ? 'animate-spin-slow text-yellow-300' : ''} />
-             <span className="text-xs font-bold uppercase tracking-wider">{isAmbientMusic ? 'Magical Ambience On' : 'Enable Ambience'}</span>
+             <Sparkles size={14} className={`sm:w-4 sm:h-4 ${isAmbientMusic ? 'animate-spin-slow text-yellow-300' : ''}`} />
+             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">{isAmbientMusic ? 'Ambience On' : 'Ambience'}</span>
          </button>
 
-         <div className="absolute bottom-0 left-0 p-8 z-20 w-full max-w-4xl">
-            <div className="flex items-start gap-4 animate-slideUp">
-                <img src={FEATURED_STREAM.avatar} className="w-20 h-20 rounded-2xl border-2 border-purple-500 shadow-lg shadow-purple-500/20" alt="Streamer" />
-                <div>
-                    <span className="bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold mb-2 inline-block">FEATURED</span>
-                    <h1 className="text-4xl font-black mb-2 drop-shadow-lg">{FEATURED_STREAM.title}</h1>
-                    <div className="flex items-center gap-4 text-sm font-medium">
-                        <span className="text-purple-400">{FEATURED_STREAM.streamer}</span>
+         <div className="absolute bottom-0 left-0 p-3.5 xs:p-5 sm:p-8 z-20 w-full max-w-4xl">
+            <div className="flex items-start gap-2.5 xs:gap-3.5 sm:gap-4 animate-slideUp">
+                <img src={FEATURED_STREAM.avatar} className="w-12 h-12 xs:w-16 xs:h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl border-2 border-purple-500 shadow-lg shadow-purple-500/20 shrink-0" alt="Streamer" />
+                <div className="min-w-0">
+                    <span className="bg-purple-600 text-white px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold mb-1 sm:mb-2 inline-block">FEATURED</span>
+                    <h1 className="text-base xs:text-xl sm:text-3xl md:text-4xl font-black mb-1 sm:mb-2 drop-shadow-lg truncate">{FEATURED_STREAM.title}</h1>
+                    <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm font-medium flex-wrap">
+                        <span className="text-purple-400 font-bold">{FEATURED_STREAM.streamer}</span>
+                        <span className="text-slate-300 hidden xs:inline">•</span>
                         <span className="text-slate-300">{FEATURED_STREAM.game}</span>
-                        <span className="flex items-center gap-1 text-red-500"><Signal size={16} /> {FEATURED_STREAM.viewers} Viewers</span>
+                        <span className="flex items-center gap-1 text-red-500"><Signal size={14} /> {FEATURED_STREAM.viewers}</span>
                     </div>
-                    <p className="mt-4 text-slate-300 max-w-xl line-clamp-2">The ultimate showdown begins! Watch the best teams in the world compete for the championship trophy in this historic best of 5 series.</p>
+                    <p className="mt-1 xs:mt-2 sm:mt-4 text-slate-300 max-w-xl text-[11px] sm:text-sm line-clamp-1 xs:line-clamp-2">The ultimate showdown begins! Watch the best teams in the world compete for the championship trophy in this historic best of 5 series.</p>
                     
-                    <div className="mt-6 flex gap-4">
+                    <div className="mt-2.5 xs:mt-4 sm:mt-6 flex gap-2 sm:gap-4">
                         <button 
                             onClick={() => handleVideoClick(FEATURED_STREAM)}
-                            className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:scale-105 transition-transform flex items-center gap-2"
+                            className="px-3.5 xs:px-5 sm:px-6 py-1.5 xs:py-2.5 sm:py-3 bg-white text-black font-bold text-xs sm:text-sm rounded-xl hover:scale-105 transition-transform flex items-center gap-1.5 sm:gap-2 shadow-lg"
                         >
-                            <Play size={20} fill="black" /> Watch Now
+                            <Play size={16} fill="black" /> Watch Now
                         </button>
                     </div>
                 </div>
@@ -319,14 +489,110 @@ export const BrowseView: React.FC = () => {
 
       <div className="p-6 md:p-8 space-y-12">
         
+        {/* --- YouTube-Style Personalized Recommendations (Always featured prominently) --- */}
+        <section className="bg-gradient-to-b from-purple-950/20 to-transparent p-4 sm:p-6 rounded-[2rem] border border-white/5">
+            <PersonalizedVideoShelf 
+                title="Personalized Video Feed" 
+                subtitle="Real-time YouTube-style algorithm tuned to your watch time, likes & searches" 
+                limit={6} 
+            />
+        </section>
+
+        {/* --- Featured Creators in Nexus Theme (YouTube & Twitch Channels) --- */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-black text-white flex items-center gap-2">
+                <Users className="text-purple-400" size={18} />
+                <span>{isJunior ? 'Kid-Friendly Gaming Creators' : 'Featured Creators in Nexus Theme'}</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5 font-medium">
+                Browse YouTube & Twitch channels rendered directly inside our custom theme
+              </p>
+            </div>
+            {isJunior && (
+              <span className="text-xs font-bold text-amber-300 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20">
+                Kid-Safe Verified ✨
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {(isJunior ? CREATOR_DIRECTORY.filter(c => c.kidFriendly) : CREATOR_DIRECTORY).slice(0, 4).map(creator => (
+              <div
+                key={creator.id}
+                onClick={() => {
+                  playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3', 'system', 0.4);
+                  setSelectedChannel(creator);
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-[#151622] border border-white/5 hover:border-purple-500/40 p-4 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between shadow-lg hover:shadow-2xl"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="relative w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-purple-500/40 shrink-0">
+                    <img src={creator.avatar} alt={creator.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                    {creator.isLive && (
+                      <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-red-500 border-2 border-black animate-pulse" />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1">
+                      <h4 className="font-bold text-sm text-white truncate group-hover:text-purple-300 transition-colors">{creator.name}</h4>
+                      {creator.verified && <CheckCircle2 size={13} className="text-purple-400 shrink-0" />}
+                    </div>
+                    <p className="text-xs text-purple-400 font-medium">{creator.handle}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{creator.subscribers}</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-xs">
+                  <span className="px-2 py-0.5 rounded-md bg-white/5 text-[10px] font-bold text-slate-300">
+                    {creator.platform === 'both' ? 'YT & Twitch' : creator.platform === 'twitch' ? 'Twitch' : 'YouTube'}
+                  </span>
+                  <span className="text-purple-400 font-bold group-hover:underline flex items-center gap-1">
+                    View Channel →
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* --- Categories Filters --- */}
         <section>
-            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                {CATEGORIES.map(cat => (
-                    <div key={cat.id} className="flex-shrink-0 group cursor-pointer">
-                        <div className={`w-36 h-36 rounded-2xl bg-gradient-to-br ${cat.color} p-4 relative overflow-hidden transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-2xl`}>
-                            <h3 className="font-bold text-xl relative z-10">{cat.name}</h3>
-                            <p className="text-xs opacity-80 relative z-10">{cat.viewers}</p>
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                    {isJunior ? <Star className="text-amber-400" size={18} /> : <Gamepad2 className="text-purple-400" size={18} />}
+                    <span>{isJunior ? 'Kid-Friendly Categories' : 'Browse Categories'}</span>
+                </h3>
+                {isJunior && (
+                    <span className="text-xs font-bold text-amber-300 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20">
+                        Junior Filter Active ✨
+                    </span>
+                )}
+            </div>
+
+            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                {(isJunior ? [
+                    { id: 'j1', name: '⛏️ Minecraft', viewers: '320K', color: 'from-emerald-500 to-green-600', icon: Gamepad2 },
+                    { id: 'j2', name: '🌈 Roblox', viewers: '410K', color: 'from-pink-500 to-rose-600', icon: Rocket },
+                    { id: 'j3', name: '🍄 Nintendo & Mario', viewers: '180K', color: 'from-red-500 to-amber-500', icon: Star },
+                    { id: 'j4', name: '⚽ Sports & Goals', viewers: '95K', color: 'from-blue-500 to-cyan-500', icon: Trophy },
+                    { id: 'j5', name: '🧱 LEGO Builds', viewers: '150K', color: 'from-yellow-500 to-orange-500', icon: Sparkles },
+                    { id: 'j6', name: '😂 Funny Clips', viewers: '280K', color: 'from-purple-500 to-indigo-500', icon: Mic },
+                ] : CATEGORIES).map(cat => (
+                    <div 
+                        key={cat.id} 
+                        onClick={() => {
+                            setActiveCategory(cat.name);
+                            playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3', 'system', 0.4);
+                        }}
+                        className="flex-shrink-0 group cursor-pointer"
+                    >
+                        <div className={`w-36 h-36 rounded-2xl bg-gradient-to-br ${cat.color} p-4 relative overflow-hidden transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-2xl select-none ${
+                            activeCategory === cat.name ? 'ring-4 ring-white shadow-xl scale-105' : ''
+                        }`}>
+                            <h3 className="font-bold text-xl relative z-10 leading-snug">{cat.name}</h3>
+                            <p className="text-xs opacity-80 relative z-10 mt-1">{cat.viewers} watching</p>
                             <cat.icon className="absolute -bottom-4 -right-4 text-white/20 w-24 h-24 transform group-hover:rotate-12 transition-transform" />
                         </div>
                     </div>
@@ -335,324 +601,274 @@ export const BrowseView: React.FC = () => {
         </section>
 
         {/* --- Live Channels Grid --- */}
-        <section>
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span> 
-                    Live Channels
-                </h2>
-                <div className="flex gap-2">
-                    <button className="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors"><Filter size={20}/></button>
+        {!isJunior && (
+            <section>
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold flex items-center gap-2">
+                        <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span> 
+                        Live Channels
+                    </h2>
+                    <div className="flex gap-2">
+                        <button className="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors"><Filter size={20}/></button>
+                    </div>
                 </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {LIVE_CHANNELS.map(channel => (
-                    <div key={channel.id} className="group cursor-pointer" onClick={() => handleVideoClick(channel)}>
-                        <div className="relative aspect-video rounded-xl overflow-hidden mb-3 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/20 group-hover:ring-1 group-hover:ring-white/10">
-                            <img src={channel.thumbnail} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={channel.title} />
-                            <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">
-                                <Signal size={10} /> Live
-                            </div>
-                            <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-0.5 rounded">
-                                {channel.viewers} viewers
-                            </div>
-                            {/* Hover Overlay */}
-                            <div className="absolute inset-0 bg-purple-900/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                <Play size={48} className="text-white drop-shadow-lg scale-50 group-hover:scale-100 transition-transform duration-300 ease-out" fill="white" />
-                            </div>
-                        </div>
-                        <div className="flex gap-3">
-                            <img src={channel.avatar} className="w-10 h-10 rounded-full ring-2 ring-transparent group-hover:ring-purple-500 transition-all" alt="Avatar" />
-                            <div className="flex-1 min-w-0">
-                                <h3 className="font-bold text-sm text-white truncate group-hover:text-purple-400 transition-colors">{channel.title}</h3>
-                                <p className="text-xs text-slate-400 mt-1">{channel.streamer}</p>
-                                <p className="text-xs text-slate-500 mt-0.5 hover:text-purple-400 transition-colors cursor-pointer">{channel.game}</p>
-                                <div className="flex gap-2 mt-2">
-                                    {channel.tags.map(tag => (
-                                        <span key={tag} className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full hover:bg-slate-700 transition-colors">
-                                            {tag}
-                                        </span>
-                                    ))}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {LIVE_CHANNELS.map(channel => (
+                        <div key={channel.id} className="group cursor-pointer" onClick={() => handleVideoClick(channel)}>
+                            <div className="relative aspect-video rounded-xl overflow-hidden mb-3 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/20 group-hover:ring-1 group-hover:ring-white/10">
+                                <img src={channel.thumbnail} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={channel.title} />
+                                <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">
+                                    <Signal size={10} /> Live
+                                </div>
+                                <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-0.5 rounded">
+                                    {channel.viewers} viewers
+                                </div>
+                                {/* Hover Overlay */}
+                                <div className="absolute inset-0 bg-purple-900/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                    <Play size={48} className="text-white drop-shadow-lg scale-50 group-hover:scale-100 transition-transform duration-300 ease-out" fill="white" />
                                 </div>
                             </div>
-                            <button className="self-start text-slate-500 hover:text-white"><MoreVertical size={16} /></button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </section>
-
-        {/* --- Recommended Videos (YouTube Style) --- */}
-        <section className="pt-8 border-t border-slate-800">
-            <h2 className="text-2xl font-bold mb-6 text-slate-200 flex items-center gap-2">
-                Recommended Videos
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
-                {VIDEOS.map(video => (
-                    <div key={video.id} className="group cursor-pointer" onClick={() => handleVideoClick(video)}>
-                        <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-slate-800 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/20 group-hover:ring-1 group-hover:ring-white/10">
-                            <img src={video.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt={video.title} />
-                            <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-bold px-1.5 py-0.5 rounded">
-                                {video.duration}
-                            </span>
-                        </div>
-                        <div className="flex gap-3">
-                            <img src={video.avatar} className="w-9 h-9 rounded-full object-cover" alt={video.channel} />
-                            <div className="flex-1">
-                                <h3 className="font-bold text-sm text-white line-clamp-2 leading-tight group-hover:text-purple-400 transition-colors">
-                                    {video.title}
-                                </h3>
-                                <div className="text-xs text-slate-400 mt-1 space-y-0.5">
-                                    <p className="hover:text-white transition-colors flex items-center gap-1 group/channel">
-                                        {video.channel}
-                                        <CheckCircle2 size={12} className="text-slate-500 group-hover/channel:text-purple-400 transition-colors" />
-                                    </p>
-                                    <p>{video.views} views • {video.time}</p>
+                            <div className="flex gap-3">
+                                <img src={channel.avatar} className="w-10 h-10 rounded-full ring-2 ring-transparent group-hover:ring-purple-500 transition-all" alt="Avatar" />
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-sm text-white truncate group-hover:text-purple-400 transition-colors">{channel.title}</h3>
+                                    <p className="text-xs text-slate-400 mt-1">{channel.streamer}</p>
+                                    <p className="text-xs text-slate-500 mt-0.5 hover:text-purple-400 transition-colors cursor-pointer">{channel.game}</p>
+                                    <div className="flex gap-2 mt-2">
+                                        {channel.tags.map(tag => (
+                                            <span key={tag} className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full hover:bg-slate-700 transition-colors">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
+                                <button className="self-start text-slate-500 hover:text-white"><MoreVertical size={16} /></button>
                             </div>
-                            <button className="opacity-0 group-hover:opacity-100 transition-opacity self-start text-slate-400 hover:text-white">
-                                <MoreVertical size={16} />
-                            </button>
                         </div>
-                    </div>
-                ))}
-            </div>
-        </section>
+                    ))}
+                </div>
+            </section>
+        )}
 
       </div>
         </>
         )
       ) : (
-        <div className="p-6 md:p-8 space-y-12 animate-fadeIn">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-black text-white">
-                    Search Results for <span className="text-purple-500">"{searchQuery}"</span>
-                </h2>
-                <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
-                    {filteredLiveChannels.length + filteredVideos.length} Results Found
-                </p>
+        /* --- Search Results Screen with Creator Channels & Videos in Nexus Theme --- */
+        <div className="p-6 md:p-8 space-y-10 animate-fadeIn">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-4">
+                <div>
+                  <h2 className="text-2xl font-black text-white flex items-center gap-2">
+                    <span>Search Results for</span>
+                    <span className="text-purple-400">"{searchQuery}"</span>
+                  </h2>
+                  <p className="text-slate-400 text-xs sm:text-sm mt-0.5">
+                    Found {allMatchedChannels.length} creator channels & {allSearchVideos.length + filteredLiveChannels.length} videos
+                  </p>
+                </div>
+
+                {aiSearchLoading && (
+                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-300 text-xs font-bold animate-pulse">
+                    <Loader2 size={14} className="animate-spin text-purple-400" />
+                    <span>Live AI YouTube & Twitch Search...</span>
+                  </div>
+                )}
             </div>
 
-            {!hasResults ? (
+            {!hasResults && !aiSearchLoading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                     <div className="w-24 h-24 bg-slate-800/50 rounded-full flex items-center justify-center mb-6 border border-white/5">
                         <Search size={40} className="text-slate-600" />
                     </div>
                     <h3 className="text-xl font-bold text-white mb-2">No matches found</h3>
-                    <p className="text-slate-500 max-w-xs">We couldn't find any videos or streams matching your search. Try different keywords.</p>
-                    <button 
-                        onClick={() => setSearchQuery('')}
-                        className="mt-8 px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition-all active:scale-95"
-                    >
-                        Clear Search
-                    </button>
+                    <p className="text-slate-500 max-w-xs">We couldn't find any videos or channels matching "{searchQuery}". Try different keywords or click a popular creator below.</p>
+                    <div className="flex flex-wrap gap-2 justify-center max-w-md mt-6">
+                      {['TenZ', 'MrBeast', 'DanTDM', 'Shroud', 'Tarik', 'Minecraft Speedrun'].map(tag => (
+                        <button
+                          key={tag}
+                          onClick={() => setSearchQuery(tag)}
+                          className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-purple-600/20 text-xs font-bold text-slate-300 border border-white/10"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
                 </div>
             ) : (
                 <>
-                    {/* Filtered Live Channels */}
-                    {filteredLiveChannels.length > 0 && (
-                        <section>
-                            <h3 className="text-lg font-bold mb-6 text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <Signal size={18} className="text-red-500" /> Live Streams
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {filteredLiveChannels.map(channel => (
-                                    <div key={channel.id} className="group cursor-pointer" onClick={() => handleVideoClick(channel)}>
-                                        <div className="relative aspect-video rounded-xl overflow-hidden mb-3 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/20 group-hover:ring-1 group-hover:ring-white/10">
-                                            <img src={channel.thumbnail} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={channel.title} />
-                                            <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1">
-                                                <Signal size={10} /> Live
-                                            </div>
-                                            <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-0.5 rounded">
-                                                {channel.viewers} viewers
-                                            </div>
-                                            <div className="absolute inset-0 bg-purple-900/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                                <Play size={48} className="text-white drop-shadow-lg scale-50 group-hover:scale-100 transition-transform duration-300 ease-out" fill="white" />
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-3">
-                                            <img src={channel.avatar} className="w-10 h-10 rounded-full ring-2 ring-transparent group-hover:ring-purple-500 transition-all" alt="Avatar" />
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-sm text-white truncate group-hover:text-purple-400 transition-colors">{channel.title}</h3>
-                                                <p className="text-xs text-slate-400 mt-1">{channel.streamer}</p>
-                                                <p className="text-xs text-slate-500 mt-0.5">{channel.game}</p>
-                                            </div>
-                                        </div>
+                    {/* --- MATCHED CREATOR CHANNELS IN NEXUS THEME --- */}
+                    {allMatchedChannels.length > 0 && (
+                      <section className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-black text-white flex items-center gap-2">
+                            <Users size={18} className="text-purple-400" />
+                            <span>Creator Channels in Nexus Theme</span>
+                          </h3>
+                          <span className="text-xs text-slate-400 font-semibold">
+                            Click to open full channel profile
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                          {allMatchedChannels.map(creator => (
+                            <div
+                              key={creator.id}
+                              onClick={() => {
+                                playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3', 'system', 0.4);
+                                setSelectedChannel(creator);
+                              }}
+                              className="group relative rounded-3xl overflow-hidden bg-[#14151e] border border-white/10 hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer shadow-xl hover:shadow-2xl flex flex-col justify-between"
+                            >
+                              {/* Banner Preview */}
+                              <div className="relative h-24 w-full overflow-hidden bg-black/40">
+                                <img src={creator.banner} alt={creator.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-70" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#14151e] to-transparent" />
+                                
+                                <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[10px] font-bold text-slate-200">
+                                  {creator.platform === 'twitch' ? (
+                                    <span className="text-[#bf94ff] flex items-center gap-1"><Radio size={10} /> Twitch Channel</span>
+                                  ) : creator.platform === 'both' ? (
+                                    <span className="text-purple-300 flex items-center gap-1"><Sparkles size={10} /> YT & Twitch</span>
+                                  ) : (
+                                    <span className="text-red-400 flex items-center gap-1"><Tv size={10} /> YouTube Channel</span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Content Body */}
+                              <div className="p-5 pt-0 relative z-10 -mt-8 flex-1 flex flex-col justify-between">
+                                <div>
+                                  <div className="flex items-end gap-3 mb-3">
+                                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden ring-3 ring-[#14151e] bg-black shadow-lg shrink-0">
+                                      <img src={creator.avatar} alt={creator.name} className="w-full h-full object-cover" />
+                                      {creator.isLive && (
+                                        <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-black animate-pulse" />
+                                      )}
                                     </div>
-                                ))}
+                                    <div className="min-w-0 pb-0.5">
+                                      <div className="flex items-center gap-1">
+                                        <h4 className="font-black text-sm text-white truncate group-hover:text-purple-300 transition-colors">{creator.name}</h4>
+                                        {creator.verified && <CheckCircle2 size={13} className="text-purple-400 shrink-0" />}
+                                      </div>
+                                      <p className="text-xs text-purple-400 font-medium">{creator.handle}</p>
+                                    </div>
+                                  </div>
+
+                                  <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                                    {creator.bio}
+                                  </p>
+                                </div>
+
+                                <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs">
+                                  <span className="text-[11px] font-semibold text-slate-400">{creator.subscribers}</span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedChannel(creator);
+                                    }}
+                                    className="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white border border-purple-500/30 text-xs font-bold transition-all"
+                                  >
+                                    View Channel in Nexus →
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                        </section>
+                          ))}
+                        </div>
+                      </section>
                     )}
 
-                    {/* Filtered Videos */}
-                    {filteredVideos.length > 0 && (
-                        <section className="pt-8 border-t border-slate-800">
-                            <h3 className="text-lg font-bold mb-6 text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <Video size={18} className="text-purple-500" /> Videos
-                            </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
-                                {filteredVideos.map(video => (
-                                    <div key={video.id} className="group cursor-pointer" onClick={() => handleVideoClick(video)}>
-                                        <div className="relative aspect-video rounded-xl overflow-hidden mb-3 bg-slate-800 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/20 group-hover:ring-1 group-hover:ring-white/10">
-                                            <img src={video.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt={video.title} />
-                                            <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-bold px-1.5 py-0.5 rounded">
-                                                {video.duration}
-                                            </span>
-                                        </div>
-                                        <div className="flex gap-3">
-                                            <img src={video.avatar} className="w-9 h-9 rounded-full object-cover" alt={video.channel} />
-                                            <div className="flex-1">
-                                                <h3 className="font-bold text-sm text-white line-clamp-2 leading-tight group-hover:text-purple-400 transition-colors">
-                                                    {video.title}
-                                                </h3>
-                                                <div className="text-xs text-slate-400 mt-1">
-                                                    <p className="hover:text-white transition-colors flex items-center gap-1 group/channel">
-                                                        {video.channel}
-                                                        <CheckCircle2 size={12} className="text-slate-500" />
-                                                    </p>
-                                                    <p>{video.views} views • {video.time}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                    {/* --- MATCHING VIDEOS WITH AUTHENTIC ORIGINAL THUMBNAILS --- */}
+                    {allSearchVideos.length > 0 && (
+                      <section className="space-y-4 pt-4 border-t border-white/5">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-black text-white flex items-center gap-2">
+                            <Video size={18} className="text-purple-400" />
+                            <span>Matching Videos (Direct YouTube Streams)</span>
+                          </h3>
+                          <span className="text-xs text-slate-400 font-semibold">
+                            Plays inside Nexus with original YouTube thumbnails
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                          {allSearchVideos.map(video => (
+                            <div
+                              key={video.id}
+                              onClick={() => handleVideoClick(video)}
+                              className="group relative rounded-2xl overflow-hidden cursor-pointer bg-[#14151e] border border-white/5 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-2xl flex flex-col justify-between"
+                            >
+                              {/* Authentic Original YouTube Thumbnail */}
+                              <div className="relative aspect-video w-full overflow-hidden bg-black/60">
+                                <img
+                                  src={getVideoThumbnail(video)}
+                                  alt={video.title}
+                                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  onError={(e) => {
+                                    if (video.youtubeId) {
+                                      (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                                    }
+                                  }}
+                                />
+
+                                {/* Duration Badge */}
+                                <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/85 backdrop-blur-md text-white font-mono text-xs font-bold shadow-md">
+                                  {video.duration}
+                                </div>
+
+                                {/* Provider badge */}
+                                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[10px] font-bold text-red-400 flex items-center gap-1">
+                                  <Tv size={10} /> YouTube
+                                </div>
+
+                                {/* Hover Play Overlay */}
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                  <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
+                                    <Play size={20} fill="currentColor" className="ml-0.5" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Details */}
+                              <div className="p-4 flex-1 flex flex-col justify-between">
+                                <div>
+                                  <h4 className="font-bold text-sm text-white line-clamp-2 leading-snug group-hover:text-purple-300 transition-colors">
+                                    {video.title}
+                                  </h4>
+                                </div>
+
+                                <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">
+                                  <span className="truncate max-w-[130px] font-medium text-slate-300">{video.channel || video.author}</span>
+                                  <span>{video.views}</span>
+                                </div>
+                              </div>
                             </div>
-                        </section>
+                          ))}
+                        </div>
+                      </section>
                     )}
                 </>
             )}
         </div>
       )}
 
-      {/* --- Video Player Modal with Zoom Animation --- */}
+      {/* --- Channel Profile Modal in Nexus Theme --- */}
+      {selectedChannel && (
+        <ChannelProfileModal
+          channel={selectedChannel}
+          onClose={() => setSelectedChannel(null)}
+          onSelectVideo={handleVideoClick}
+        />
+      )}
+
+      {/* --- Video Player Modal with Direct Server Streaming --- */}
       {selectedVideo && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-fadeIn" onClick={closeVideo}>
-                <div 
-                    className="relative w-full max-w-6xl bg-[#0f1014] rounded-2xl shadow-2xl overflow-hidden animate-zoomIn border border-slate-800"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    {/* Header */}
-                    <div className="flex items-center justify-between p-4 border-b border-slate-800 bg-[#1e1f24]">
-                        <h3 className="font-bold text-lg truncate pr-4">{selectedVideo.title}</h3>
-                        <button onClick={closeVideo} className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors">
-                            <X size={18} />
-                        </button>
-                    </div>
-
-                    {/* Video Area */}
-                    <div className="aspect-video bg-black relative group cursor-pointer" onClick={togglePlay}>
-                        <img src={selectedVideo.thumbnail || 'https://picsum.photos/1920/1080'} className="w-full h-full object-cover opacity-60" />
-                        
-                        {/* Centered Play Button (Show only when paused) */}
-                        {!isPlaying && (
-                            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                                <div className="w-24 h-24 rounded-full bg-purple-600/90 backdrop-blur-sm hover:bg-purple-500 flex items-center justify-center shadow-[0_0_40px_rgba(147,51,234,0.5)] transition-transform hover:scale-110 pointer-events-auto">
-                                    <Play size={40} fill="white" className="ml-2" />
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Controls Overlay */}
-                        <div 
-                            className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-6 pb-6 pt-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-4 cursor-default"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {/* Progress Bar */}
-                            <div className="relative h-1.5 bg-white/20 rounded-full cursor-pointer group/progress hover:h-2.5 transition-all" onClick={(e) => {
-                                const rect = e.currentTarget.getBoundingClientRect();
-                                const percent = ((e.clientX - rect.left) / rect.width) * 100;
-                                setProgress(Math.max(0, Math.min(100, percent)));
-                            }}>
-                                <div className="absolute h-full bg-purple-500 rounded-full" style={{ width: `${progress}%` }}>
-                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full opacity-0 group-hover/progress:opacity-100 shadow-lg transform scale-0 group-hover/progress:scale-100 transition-all"></div>
-                                </div>
-                            </div>
-
-                            {/* Control Buttons */}
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-6">
-                                    <button onClick={togglePlay} className="text-white hover:text-purple-400 transition-colors transform hover:scale-110 active:scale-95">
-                                        {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" />}
-                                    </button>
-                                    
-                                    <div className="flex items-center gap-3 group/vol">
-                                        <button onClick={() => setVolume(volume === 0 ? 80 : 0)} className="text-white hover:text-purple-400 transition-colors">
-                                             {volume === 0 ? <VolumeX size={24} /> : <Volume2 size={24} />}
-                                        </button>
-                                        <div className="w-0 overflow-hidden group-hover/vol:w-24 transition-all duration-300">
-                                            <input 
-                                                type="range" 
-                                                min="0" 
-                                                max="100" 
-                                                value={volume} 
-                                                onChange={(e) => setVolume(Number(e.target.value))}
-                                                className="w-24 h-1 accent-purple-500 bg-white/20 rounded-lg appearance-none cursor-pointer" 
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="text-xs font-mono font-bold text-slate-300 tracking-wider">
-                                        04:20 <span className="text-slate-500 mx-1">/</span> {selectedVideo.duration || '10:00'}
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-4">
-                                    <button className="text-slate-300 hover:text-white transition-colors hover:rotate-90 duration-300"><Settings size={22} /></button>
-                                    <button className="text-slate-300 hover:text-white transition-colors hover:scale-110"><Maximize size={22} /></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Meta & Chat Area */}
-                    <div className="p-6 flex flex-col md:flex-row gap-6 bg-[#0f1014]">
-                        <div className="flex-1">
-                             <div className="flex items-start gap-4 mb-6">
-                                <img src={selectedVideo.avatar || `https://picsum.photos/50/50?random=${selectedVideo.id}`} className="w-12 h-12 rounded-full" />
-                                <div>
-                                    <h4 className="font-bold text-lg">{selectedVideo.channel || selectedVideo.streamer}</h4>
-                                    <p className="text-slate-400 text-sm">{selectedVideo.viewers || selectedVideo.views} • {selectedVideo.game || selectedVideo.time}</p>
-                                </div>
-                                <button className="ml-auto bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors">
-                                    Subscribe
-                                </button>
-                             </div>
-                             
-                             <div className="flex gap-3 pb-4">
-                                <button 
-                                    onClick={toggleLike}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all transform active:scale-95
-                                    ${isLiked ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/40' : 'bg-slate-800 hover:bg-slate-700 text-slate-200'}
-                                    `}>
-                                    <ThumbsUp size={16} fill={isLiked ? "currentColor" : "none"} /> 
-                                    {likes.toLocaleString()}
-                                </button>
-                                <button className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-full text-sm font-bold transition-colors text-slate-200">
-                                    <MessageCircle size={16} /> Comment
-                                </button>
-                                <button className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-full text-sm font-bold transition-colors text-slate-200">
-                                    <Share2 size={16} /> Share
-                                </button>
-                             </div>
-                        </div>
-                        
-                        {/* Pseudo Chat (Desktop Only) */}
-                        <div className="hidden md:flex w-80 bg-[#1e1f24] rounded-xl flex-col h-64 border border-slate-800">
-                             <div className="p-3 border-b border-slate-800 font-bold text-xs uppercase tracking-wider">Stream Chat</div>
-                             <div className="flex-1 p-3 overflow-y-auto space-y-2 text-sm font-medium">
-                                <p><span className="text-purple-400">User123:</span> POGGERS!</p>
-                                <p><span className="text-green-400">Mod_Steve:</span> Please keep it clean.</p>
-                                <p><span className="text-blue-400">GamerGirl:</span> That aim is insane</p>
-                                <p><span className="text-orange-400">NoobSlayer:</span> LULW</p>
-                             </div>
-                             <div className="p-3 border-t border-slate-800">
-                                 <input placeholder="Send a message..." className="w-full bg-black/30 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-purple-500" />
-                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <VideoPlayerModal 
+          video={selectedVideo} 
+          onClose={closeVideo} 
+          onSelectVideo={(v) => setSelectedVideo(v)} 
+        />
       )}
 
       <style>{`

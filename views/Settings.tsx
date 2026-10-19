@@ -361,54 +361,54 @@ export const SettingsView: React.FC<SettingsProps> = ({ isDark, toggleTheme, onL
       )}
 
       {/* Banner Section */}
-      <div className="relative h-64 w-full group">
+      <div className="relative h-36 xs:h-48 sm:h-64 w-full group">
         <img 
           src={profile.banner} 
           className="w-full h-full object-cover mask-gradient-b" 
           alt="Cover"
         />
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-        <button className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white px-4 py-2 rounded-full backdrop-blur-md flex items-center gap-2 transition-all opacity-0 group-hover:opacity-100 font-medium">
-          <Camera size={16} /> Change Cover
+        <button className="absolute top-2.5 xs:top-4 right-2.5 xs:right-4 bg-black/50 hover:bg-black/70 text-white px-3 xs:px-4 py-1.5 xs:py-2 rounded-full backdrop-blur-md flex items-center gap-1.5 xs:gap-2 transition-all opacity-0 group-hover:opacity-100 font-medium text-xs xs:text-sm">
+          <Camera size={14} className="xs:w-4 xs:h-4" /> Change Cover
         </button>
       </div>
 
-      <div className="px-4 md:px-8 max-w-7xl mx-auto -mt-20 relative z-10">
-        <div className="flex flex-col xl:flex-row gap-8">
+      <div className="px-3 xs:px-4 md:px-8 max-w-7xl mx-auto -mt-10 xs:-mt-14 sm:-mt-20 relative z-10">
+        <div className="flex flex-col xl:flex-row gap-4 sm:gap-8">
           
           {/* Left Column: Profile & Socials */}
-          <div className="flex-1 space-y-8">
+          <div className="flex-1 space-y-4 sm:space-y-8">
             {/* Profile Header */}
-            <div className="flex flex-col md:flex-row items-start md:items-end gap-6 mb-4">
+            <div className="flex flex-col md:flex-row items-start md:items-end gap-3 xs:gap-4 sm:gap-6 mb-2 sm:mb-4">
               <div 
                 className="relative group cursor-pointer"
                 onClick={handleAvatarClick}
               >
                 {/* Equipped Badge Medallion on Settings Avatar */}
-                <div className={`absolute -top-2 -left-2 w-8 h-8 rounded-xl bg-[#121216] border ${equippedBadge.borderColor} flex items-center justify-center shadow-lg z-10`} title={`Equipped Badge: ${equippedBadge.title}`}>
-                   <EquippedBadgeIcon size={16} className={equippedBadge.rarityColor} />
+                <div className={`absolute -top-1.5 -left-1.5 w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#121216] border ${equippedBadge.borderColor} flex items-center justify-center shadow-lg z-10`} title={`Equipped Badge: ${equippedBadge.title}`}>
+                   <EquippedBadgeIcon size={13} className={`${equippedBadge.rarityColor} sm:w-4 sm:h-4`} />
                 </div>
 
                 <img 
                   src={profile.avatar} 
-                  className="w-32 h-32 rounded-3xl border-4 border-white dark:border-[#0f1014] shadow-2xl object-cover bg-slate-200" 
+                  className="w-20 h-20 xs:w-24 xs:h-24 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl border-3 sm:border-4 border-white dark:border-[#0f1014] shadow-2xl object-cover bg-slate-200" 
                   alt="Avatar"
                 />
-                <div className="absolute inset-0 bg-black/60 rounded-3xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px] text-white">
-                   <Upload size={24} className="mb-1" />
-                   <span className="text-[10px] font-bold uppercase tracking-wider">Upload</span>
+                <div className="absolute inset-0 bg-black/60 rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px] text-white">
+                   <Upload size={18} className="sm:w-6 sm:h-6 mb-0.5" />
+                   <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Upload</span>
                 </div>
-                <div className="absolute -bottom-2 -right-2 bg-purple-500 text-white p-2 rounded-full border-4 border-[#0f1014] shadow-lg group-hover:scale-110 transition-transform">
-                    <Camera size={14} />
+                <div className="absolute -bottom-1.5 -right-1.5 bg-purple-500 text-white p-1.5 sm:p-2 rounded-full border-2 sm:border-4 border-[#0f1014] shadow-lg group-hover:scale-110 transition-transform">
+                    <Camera size={12} className="sm:w-3.5 sm:h-3.5" />
                 </div>
               </div>
-              <div className="pb-2">
-                <h1 className="text-3xl font-black text-slate-800 dark:text-white">{profile.displayName}</h1>
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <p className="text-purple-500 font-bold">Level 42 • Pro Member</p>
+              <div className="pb-1 sm:pb-2">
+                <h1 className="text-xl xs:text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">{profile.displayName}</h1>
+                <div className="flex items-center gap-2 mt-0.5 sm:mt-1 flex-wrap">
+                  <p className="text-purple-500 font-bold text-xs sm:text-sm">Level 42 • Pro Member</p>
                   <span className="text-slate-500">•</span>
-                  <div className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-black/40 border ${equippedBadge.borderColor} ${equippedBadge.rarityColor} text-xs font-bold`}>
-                    <EquippedBadgeIcon size={13} />
+                  <div className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-lg bg-black/40 border ${equippedBadge.borderColor} ${equippedBadge.rarityColor} text-[10px] sm:text-xs font-bold`}>
+                    <EquippedBadgeIcon size={11} className="sm:w-3 sm:h-3" />
                     <span>{equippedBadge.title}</span>
                   </div>
                 </div>
@@ -416,49 +416,49 @@ export const SettingsView: React.FC<SettingsProps> = ({ isDark, toggleTheme, onL
             </div>
 
             {/* Profile Form */}
-            <div className="bg-white dark:bg-[#1e1f24] p-8 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50">
-               <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+            <div className="bg-white dark:bg-[#1e1f24] p-3.5 xs:p-5 sm:p-7 md:p-8 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50">
+               <h3 className="text-lg xs:text-xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6 flex items-center gap-2">
                  Personal Information
                </h3>
                
-               <div className="space-y-6">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <div className="space-y-2">
-                     <label className="text-xs font-bold uppercase text-slate-400 tracking-wider">Display Name</label>
+               <div className="space-y-4 sm:space-y-6">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-6">
+                   <div className="space-y-1.5 sm:space-y-2">
+                     <label className="text-[10px] xs:text-xs font-bold uppercase text-slate-400 tracking-wider">Display Name</label>
                      <input 
                         value={profile.displayName}
                         onChange={(e) => setProfile({...profile, displayName: e.target.value})}
-                        className="w-full p-4 bg-slate-50 dark:bg-black/20 rounded-xl border border-transparent focus:border-purple-500 outline-none font-semibold text-slate-700 dark:text-white transition-all"
+                        className="w-full p-2.5 xs:p-3 sm:p-4 bg-slate-50 dark:bg-black/20 rounded-xl border border-transparent focus:border-purple-500 outline-none font-semibold text-xs xs:text-sm sm:text-base text-slate-700 dark:text-white transition-all"
                      />
                    </div>
-                   <div className="space-y-2">
-                     <label className="text-xs font-bold uppercase text-slate-400 tracking-wider">Email (Private)</label>
+                   <div className="space-y-1.5 sm:space-y-2">
+                     <label className="text-[10px] xs:text-xs font-bold uppercase text-slate-400 tracking-wider">Email (Private)</label>
                      <div className="relative">
                         <input 
                             value={profile.email}
                             disabled
-                            className="w-full p-4 bg-slate-100 dark:bg-black/40 rounded-xl border border-transparent outline-none font-semibold text-slate-500 dark:text-slate-500 cursor-not-allowed pl-12"
+                            className="w-full p-2.5 xs:p-3 sm:p-4 bg-slate-100 dark:bg-black/40 rounded-xl border border-transparent outline-none font-semibold text-xs xs:text-sm sm:text-base text-slate-500 dark:text-slate-500 cursor-not-allowed pl-10 sm:pl-12"
                         />
-                        <Lock className="absolute left-4 top-4 text-slate-400" size={20} />
+                        <Lock className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400" size={17} />
                      </div>
                    </div>
                  </div>
 
-                 <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase text-slate-400 tracking-wider">Bio</label>
+                 <div className="space-y-1.5 sm:space-y-2">
+                    <label className="text-[10px] xs:text-xs font-bold uppercase text-slate-400 tracking-wider">Bio</label>
                     <textarea 
                         value={profile.bio}
                         onChange={(e) => setProfile({...profile, bio: e.target.value})}
-                        className="w-full p-4 bg-slate-50 dark:bg-black/20 rounded-xl border border-transparent focus:border-purple-500 outline-none font-medium text-slate-700 dark:text-white h-32 resize-none transition-all"
+                        className="w-full p-2.5 xs:p-3 sm:p-4 bg-slate-50 dark:bg-black/20 rounded-xl border border-transparent focus:border-purple-500 outline-none font-medium text-xs xs:text-sm text-slate-700 dark:text-white h-24 xs:h-28 sm:h-32 resize-none transition-all"
                     />
                  </div>
                </div>
             </div>
 
             {/* Social Connections */}
-            <div className="bg-white dark:bg-[#1e1f24] p-8 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50">
-               <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6">Social Connections</h3>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-[#1e1f24] p-3.5 xs:p-5 sm:p-7 md:p-8 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50">
+               <h3 className="text-lg xs:text-xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6">Social Connections</h3>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-6">
                  {/* Existing Inputs */}
                  <div className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-900/30">
                     <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white">
@@ -544,8 +544,8 @@ export const SettingsView: React.FC<SettingsProps> = ({ isDark, toggleTheme, onL
             </div>
 
              {/* Persistent Audio Settings Panel */}
-            <div className="bg-white dark:bg-[#1e1f24] p-8 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50 space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="bg-white dark:bg-[#1e1f24] p-3.5 xs:p-5 sm:p-7 md:p-8 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50 space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-slate-100 dark:border-slate-800">
                     <div>
                         <h3 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
                             <Volume2 className="text-purple-500" /> Audio & Volume Controls
@@ -666,23 +666,23 @@ export const SettingsView: React.FC<SettingsProps> = ({ isDark, toggleTheme, onL
           </div>
 
           {/* Right Column: Settings */}
-          <div className="w-full xl:w-96 space-y-8">
+          <div className="w-full xl:w-96 space-y-4 sm:space-y-8">
              {/* Visual Settings */}
-             <div className="bg-white dark:bg-[#1e1f24] p-6 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Visual Preferences</h3>
+             <div className="bg-white dark:bg-[#1e1f24] p-3.5 xs:p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50">
+                <h3 className="text-base xs:text-lg font-bold text-slate-800 dark:text-white mb-4 sm:mb-6">Visual Preferences</h3>
                 <LampSwitch isDark={isDark} toggleTheme={toggleTheme} />
              </div>
 
              {/* Accessibility Settings - NEW */}
-             <div className="bg-white dark:bg-[#1e1f24] p-6 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50 space-y-4">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+             <div className="bg-white dark:bg-[#1e1f24] p-3.5 xs:p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50 space-y-3 sm:space-y-4">
+                <h3 className="text-base xs:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <AccessibilityIcon className="text-purple-500" size={20} />
                     Accessibility
                 </h3>
                 
                 {/* Font Size */}
                 <div className="space-y-2">
-                    <div className="flex justify-between text-sm font-semibold text-slate-600 dark:text-slate-300">
+                    <div className="flex justify-between text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">
                         <span>Font Size</span>
                         <span>{accessibility.fontSize}%</span>
                     </div>
@@ -695,38 +695,38 @@ export const SettingsView: React.FC<SettingsProps> = ({ isDark, toggleTheme, onL
                         onChange={(e) => setAccessibility(prev => ({...prev, fontSize: parseInt(e.target.value)}))}
                         className="w-full accent-purple-500 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
                     />
-                    <div className="flex justify-between text-xs text-slate-400 font-bold px-1">
+                    <div className="flex justify-between text-[10px] xs:text-xs text-slate-400 font-bold px-1">
                         <span>Aa</span>
-                        <span className="text-lg">Aa</span>
+                        <span className="text-base sm:text-lg">Aa</span>
                     </div>
                 </div>
 
                 {/* High Contrast Toggle */}
                 <div className="flex items-center justify-between py-2 border-t border-slate-100 dark:border-slate-800">
-                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">High Contrast</span>
+                    <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">High Contrast</span>
                     <button 
                         onClick={() => setAccessibility(prev => ({...prev, highContrast: !prev.highContrast}))}
-                        className={`w-12 h-6 rounded-full relative transition-colors ${accessibility.highContrast ? 'bg-purple-600' : 'bg-slate-300 dark:bg-slate-700'}`}
+                        className={`w-11 xs:w-12 h-6 rounded-full relative transition-colors ${accessibility.highContrast ? 'bg-purple-600' : 'bg-slate-300 dark:bg-slate-700'}`}
                     >
-                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transition-all ${accessibility.highContrast ? 'left-7' : 'left-1'}`}></div>
+                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transition-all ${accessibility.highContrast ? 'left-6 xs:left-7' : 'left-1'}`}></div>
                     </button>
                 </div>
 
                 {/* Reduce Motion Toggle */}
                 <div className="flex items-center justify-between py-2 border-t border-slate-100 dark:border-slate-800">
-                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">Reduce Motion</span>
+                    <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Reduce Motion</span>
                     <button 
                         onClick={() => setAccessibility(prev => ({...prev, reduceMotion: !prev.reduceMotion}))}
-                        className={`w-12 h-6 rounded-full relative transition-colors ${accessibility.reduceMotion ? 'bg-purple-600' : 'bg-slate-300 dark:bg-slate-700'}`}
+                        className={`w-11 xs:w-12 h-6 rounded-full relative transition-colors ${accessibility.reduceMotion ? 'bg-purple-600' : 'bg-slate-300 dark:bg-slate-700'}`}
                     >
-                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transition-all ${accessibility.reduceMotion ? 'left-7' : 'left-1'}`}></div>
+                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-md transition-all ${accessibility.reduceMotion ? 'left-6 xs:left-7' : 'left-1'}`}></div>
                     </button>
                 </div>
              </div>
 
              {/* System Settings */}
-             <div className="bg-white dark:bg-[#1e1f24] p-6 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50 space-y-2">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">System</h3>
+             <div className="bg-white dark:bg-[#1e1f24] p-3.5 xs:p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800/50 space-y-2">
+                <h3 className="text-base xs:text-lg font-bold text-slate-800 dark:text-white mb-3 sm:mb-4">System</h3>
                 
                 {[
                     { key: 'notifications' as const, label: 'Notifications', icon: Bell, active: systemPreferences.notifications },

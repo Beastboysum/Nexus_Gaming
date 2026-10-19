@@ -51,7 +51,8 @@ import {
   ExternalLink,
   RefreshCw,
   FileText,
-  ClipboardList
+  ClipboardList,
+  Zap
 } from 'lucide-react';
 import { AuditLogAction, AuditLogEntry, Server, ServerChannel, ServerInvite, ServerMember, ServerMessage, ServerRole, User, ViewState } from '../types';
 import { ServerService, CURRENT_USER } from '../services/serverService';
@@ -61,11 +62,15 @@ import { InChannelActivityOverlay } from '../components/InChannelActivityOverlay
 import { VoiceAvatarWithGlowingRing } from '../components/VoiceAvatarWithGlowingRing';
 import { VoiceChannelStage } from '../components/VoiceChannelStage';
 import { VoiceActivityService } from '../services/voiceActivityService';
+import { FriendsView, INITIAL_FRIENDS, INITIAL_REQUESTS } from './Friends';
+import { ChatView } from './Chat';
 
 interface ServersViewProps {
   onNavigate?: (view: ViewState) => void;
   onOpenDM?: (user: User) => void;
   onCall?: (user: User) => void;
+  initialViewMode?: 'server' | 'dashboard';
+  initialFriend?: User | null;
 }
 
 const PRESET_ICONS = [
@@ -212,7 +217,75 @@ export const AVAILABLE_PERMISSIONS = [
   { id: 'PRIORITY_SPEAKER', name: 'Priority Speaker', description: 'Lowers volume of other speakers when this member talks.', category: 'Voice Channels' },
 ];
 
-export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, onCall }) => {
+export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, onCall, initialViewMode, initialFriend }) => {
+  // Navigation mode: 'server' | 'dashboard'
+  const [activeViewMode, setActiveViewMode] = useState<'server' | 'dashboard'>(initialViewMode || 'dashboard');
+  const [selectedDmUser, setSelectedDmUser] = useState<User | null>(initialFriend || null);
+  const [dmSearchQuery, setDmSearchQuery] = useState('');
+  const [friendsList, setFriendsList] = useState(INITIAL_FRIENDS);
+  const dmSearchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (initialFriend) {
+      setSelectedDmUser(initialFriend);
+      setActiveViewMode('dashboard');
+    }
+  }, [initialFriend]);
+
+  // Live status update for friends in DM sidebar
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFriendsList(currentFriends => {
+        if (!currentFriends || currentFriends.length === 0) return currentFriends;
+        const updatedFriends = [...currentFriends];
+        const randomIndex = Math.floor(Math.random() * updatedFriends.length);
+        const friend = updatedFriends[randomIndex];
+        if (!friend) return currentFriends;
+        const r = Math.random();
+        
+        let newStatus = friend.status;
+        let newActivity = friend.activity;
+
+        if (friend.status === 'offline') {
+          if (r > 0.7) {
+            newStatus = 'online';
+            newActivity = 'Just started Nexus';
+          }
+        } else {
+          if (r > 0.9) {
+            newStatus = 'offline';
+            newActivity = undefined;
+          } else if (r > 0.8) {
+            newStatus = 'idle';
+            newActivity = 'Away';
+          } else if (r > 0.75) {
+            newStatus = 'dnd';
+            newActivity = 'In Queue';
+          } else {
+            newStatus = 'online';
+            const activities = [
+              'Playing Valorant', 'Playing Minecraft', 'Playing Apex Legends', 
+              'Listening to Spotify', 'Visual Studio Code', 'In Lobby',
+              'Competitive', 'Ranked Match', 'Watching Video'
+            ];
+            newActivity = activities[Math.floor(Math.random() * activities.length)];
+          }
+        }
+
+        if (updatedFriends[randomIndex]) {
+          updatedFriends[randomIndex] = { ...updatedFriends[randomIndex], status: newStatus, activity: newActivity };
+        }
+        return updatedFriends;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const filteredDmFriends = friendsList.filter(f => 
+    f.username.toLowerCase().includes(dmSearchQuery.toLowerCase()) ||
+    (f.activity && f.activity.toLowerCase().includes(dmSearchQuery.toLowerCase()))
+  );
+
   // Servers list
   const [servers, setServers] = useState<Server[]>(() => ServerService.getServers());
   const [selectedServerId, setSelectedServerId] = useState<string>(() => servers[0]?.id || '');
@@ -778,12 +851,12 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
       {/* 0. TOP SEARCH & FILTER BAR FOR JOINED SERVERS            */}
       {/* ======================================================== */}
       <div className="bg-[#0c0c11] border-b border-white/10 shrink-0 z-30">
-        <div className="h-14 px-3 sm:px-4 flex items-center justify-between gap-3">
+        <div className="h-11 xs:h-12 sm:h-14 px-2 xs:px-3 sm:px-4 flex items-center justify-between gap-2 xs:gap-3">
           
           {/* Left: Server Count & Category Pill */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-600/30 to-indigo-600/30 border border-purple-500/40 flex items-center justify-center text-purple-400 shadow-sm">
-              <Shield size={16} />
+          <div className="flex items-center gap-1.5 xs:gap-2.5 shrink-0">
+            <div className="w-7 h-7 xs:w-8 xs:h-8 rounded-lg xs:rounded-xl bg-gradient-to-br from-purple-600/30 to-indigo-600/30 border border-purple-500/40 flex items-center justify-center text-purple-400 shadow-sm">
+              <Shield size={14} className="xs:w-4 xs:h-4" />
             </div>
             <div className="hidden sm:flex flex-col">
               <div className="flex items-center gap-2">
@@ -798,8 +871,8 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
 
           {/* Center: Search Bar Input */}
           <div className="flex-1 max-w-md mx-auto relative group">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-purple-400 transition-colors">
-              <Search size={15} />
+            <div className="absolute inset-y-0 left-2.5 xs:left-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-purple-400 transition-colors">
+              <Search size={13} className="xs:w-3.5 xs:h-3.5" />
             </div>
             <input
               type="text"
@@ -813,8 +886,8 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
                   setSelectedServerId(filteredServers[0].id);
                 }
               }}
-              placeholder="Search joined servers by name... (e.g. Valorant, Syndicate)"
-              className="w-full pl-9 pr-9 py-2 rounded-xl bg-[#14141c] hover:bg-[#181822] focus:bg-[#181822] border border-white/10 focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 text-white placeholder-slate-500 text-xs transition-all outline-none"
+              placeholder="Search joined servers... (e.g. Valorant)"
+              className="w-full pl-7 xs:pl-9 pr-7 xs:pr-9 py-1 xs:py-1.5 sm:py-2 rounded-lg xs:rounded-xl bg-[#14141c] hover:bg-[#181822] focus:bg-[#181822] border border-white/10 focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 text-white placeholder-slate-500 text-[11px] xs:text-xs transition-all outline-none"
             />
             {serverSearchQuery ? (
               <button
@@ -927,136 +1000,295 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
         {/* ======================================================== */}
         {/* 1. DISCORD-STYLE SERVER RAIL / DOCK (LEFT-MOST COLUMN) */}
         {/* ======================================================== */}
-        <div className="w-[72px] bg-[#0c0c0f] border-r border-white/5 flex flex-col items-center py-3 gap-2.5 shrink-0 z-20">
+        <div className="w-12 xs:w-14 sm:w-16 md:w-[72px] bg-[#0c0c0f] border-r border-white/5 flex flex-col items-center py-2 sm:py-3 gap-1.5 xs:gap-2 sm:gap-2.5 shrink-0 z-20 select-none">
           
           {/* Direct Messages / Nexus Home Pill */}
           <div className="relative group flex items-center justify-center">
-            <div className="absolute -left-3 w-1 bg-white rounded-r-full transition-all duration-300 h-0 group-hover:h-5" />
+            <div 
+              className={`absolute left-0 w-1 bg-white rounded-r-full transition-all duration-300 ${
+                activeViewMode === 'dashboard' ? 'h-7 xs:h-8 sm:h-10' : 'h-0 group-hover:h-5'
+              }`} 
+            />
             <button
-              onClick={() => onNavigate && onNavigate('home')}
-              title="Nexus Gaming Dashboard"
-              className="w-12 h-12 rounded-[24px] hover:rounded-[16px] bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 group-hover:shadow-purple-500/25"
+              onClick={() => {
+                SoundEffectEngine.play('button-click');
+                setActiveViewMode('dashboard');
+                setSelectedDmUser(null);
+              }}
+              title="Nexus Gaming Dashboard & Direct Messages"
+              className={`relative w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 flex items-center justify-center shadow-lg transition-all duration-300 active:scale-95 ${
+                activeViewMode === 'dashboard'
+                  ? 'rounded-xl xs:rounded-[14px] sm:rounded-[16px] bg-gradient-to-br from-purple-600 to-indigo-600 shadow-purple-500/30 ring-2 ring-purple-400/50'
+                  : 'rounded-2xl xs:rounded-[20px] sm:rounded-[24px] hover:rounded-xl xs:hover:rounded-[14px] sm:hover:rounded-[16px] bg-gradient-to-br from-purple-600 to-indigo-600 hover:scale-105 group-hover:shadow-purple-500/25'
+              }`}
             >
-              <span className="font-black text-white text-lg tracking-wider">N</span>
+              <span className="font-black text-white text-sm xs:text-base sm:text-lg tracking-wider">N</span>
             </button>
           </div>
 
           {/* Separator */}
-          <div className="w-8 h-[2px] bg-white/10 rounded-full my-1" />
+          <div className="w-5 xs:w-6 sm:w-8 h-[2px] bg-white/10 rounded-full my-0.5 sm:my-1" />
 
           {/* Server List */}
-          <div className="flex-1 w-full flex flex-col items-center gap-2.5 overflow-y-auto no-scrollbar">
+          <div className="flex-1 w-full flex flex-col items-center gap-1.5 xs:gap-2 sm:gap-2.5 overflow-y-auto no-scrollbar">
             {filteredServers.map((server) => {
-              const isActive = server.id === selectedServerId;
+              const isActive = activeViewMode === 'server' && server.id === selectedServerId;
               return (
                 <div key={server.id} className="relative group flex items-center justify-center w-full">
                   {/* Active Indicator Pill */}
                   <div 
                     className={`absolute left-0 w-1 bg-white rounded-r-full transition-all duration-300 ${
-                      isActive ? 'h-10' : 'h-0 group-hover:h-5'
+                      isActive ? 'h-7 xs:h-8 sm:h-10' : 'h-0 group-hover:h-5'
                     }`} 
                   />
 
                   <button
                     onClick={() => {
                       SoundEffectEngine.play('button-click');
+                      setActiveViewMode('server');
                       setSelectedServerId(server.id);
                     }}
-                    title={server.name}
-                    className={`relative w-12 h-12 transition-all duration-300 flex items-center justify-center overflow-hidden border shadow-md active:scale-95 ${
-                      isActive 
-                        ? 'rounded-[16px] border-purple-500 shadow-purple-500/30' 
-                        : 'rounded-[24px] hover:rounded-[16px] border-white/10 hover:border-white/30 bg-[#16161b]'
-                    }`}
-                  >
-                    {server.icon ? (
-                      <img src={server.icon} alt={server.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="font-bold text-sm text-slate-200">
-                        {server.name.slice(0, 2).toUpperCase()}
-                      </span>
-                    )}
+                      title={server.name}
+                      className={`relative w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 transition-all duration-300 flex items-center justify-center overflow-hidden border shadow-md active:scale-95 ${
+                        isActive 
+                          ? 'rounded-xl xs:rounded-[14px] sm:rounded-[16px] border-purple-500 shadow-purple-500/30' 
+                          : 'rounded-2xl xs:rounded-[20px] sm:rounded-[24px] hover:rounded-xl xs:hover:rounded-[14px] sm:hover:rounded-[16px] border-white/10 hover:border-white/30 bg-[#16161b]'
+                      }`}
+                    >
+                      {server.icon ? (
+                        <img src={server.icon} alt={server.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="font-bold text-xs xs:text-sm text-slate-200">
+                          {server.name.slice(0, 2).toUpperCase()}
+                        </span>
+                      )}
 
-                    {/* Owner Crown Marker */}
-                    {server.ownerId === CURRENT_USER.id && (
-                      <div className="absolute top-0 right-0 bg-yellow-500 text-black p-0.5 rounded-bl-md shadow">
-                        <Crown size={9} />
-                      </div>
-                    )}
+                      {/* Owner Crown Marker */}
+                      {server.ownerId === CURRENT_USER.id && (
+                        <div className="absolute top-0 right-0 bg-yellow-500 text-black p-0.5 rounded-bl-md shadow">
+                          <Crown size={8} />
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+
+              {filteredServers.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-3 px-1 text-center text-slate-500 gap-1">
+                  <Search size={14} className="text-purple-400/60" />
+                  <span className="text-[8px] xs:text-[9px] font-bold text-slate-400 leading-tight">No Match</span>
+                  <button
+                    onClick={() => {
+                      setServerSearchQuery('');
+                      SoundEffectEngine.play('button-click');
+                    }}
+                    className="text-[8px] xs:text-[9px] text-purple-400 hover:underline font-bold"
+                  >
+                    Reset
                   </button>
                 </div>
-              );
-            })}
+              )}
 
-            {filteredServers.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-4 px-1 text-center text-slate-500 gap-1.5">
-                <Search size={18} className="text-purple-400/60" />
-                <span className="text-[9px] font-bold text-slate-400 leading-tight">No Match</span>
-                <button
-                  onClick={() => {
-                    setServerSearchQuery('');
-                    SoundEffectEngine.play('button-click');
-                  }}
-                  className="text-[9px] text-purple-400 hover:underline font-bold"
-                >
-                  Reset
-                </button>
-              </div>
-            )}
+            {/* Add / Create Server Button */}
+            <div className="relative group flex items-center justify-center w-full">
+              <button
+                onClick={() => {
+                  SoundEffectEngine.play('button-click');
+                  setCreateOrJoinTab('create');
+                  setShowCreateServerModal(true);
+                }}
+                title="Create a New Server"
+                className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-2xl xs:rounded-[20px] sm:rounded-[24px] hover:rounded-xl xs:hover:rounded-[14px] sm:hover:rounded-[16px] bg-[#1a1a24] hover:bg-emerald-600 text-emerald-400 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md group-hover:shadow-emerald-500/30 active:scale-95 border border-emerald-500/30 hover:border-emerald-500"
+              >
+                <Plus size={15} className="sm:w-5 sm:h-5" />
+              </button>
+            </div>
 
-          {/* Add / Create Server Button */}
-          <div className="relative group flex items-center justify-center w-full">
-            <button
-              onClick={() => {
-                SoundEffectEngine.play('button-click');
-                setCreateOrJoinTab('create');
-                setShowCreateServerModal(true);
-              }}
-              title="Create a New Server"
-              className="w-12 h-12 rounded-[24px] hover:rounded-[16px] bg-[#1a1a24] hover:bg-emerald-600 text-emerald-400 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md group-hover:shadow-emerald-500/30 active:scale-95 border border-emerald-500/30 hover:border-emerald-500"
-            >
-              <Plus size={22} />
-            </button>
+            {/* Join Server via Invite Button */}
+            <div className="relative group flex items-center justify-center w-full">
+              <button
+                onClick={() => {
+                  SoundEffectEngine.play('button-click');
+                  setShowJoinServerModal(true);
+                }}
+                title="Join Server with Invite Link or Code"
+                className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-2xl xs:rounded-[20px] sm:rounded-[24px] hover:rounded-xl xs:hover:rounded-[14px] sm:hover:rounded-[16px] bg-[#1a1a24] hover:bg-purple-600 text-purple-400 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md group-hover:shadow-purple-500/30 active:scale-95 border border-purple-500/30 hover:border-purple-500"
+              >
+                <Compass size={15} className="sm:w-5 sm:h-5" />
+              </button>
+            </div>
+
+            {/* Invite Friends / Share Server */}
+            <div className="relative group flex items-center justify-center w-full">
+              <button
+                onClick={() => {
+                  SoundEffectEngine.play('button-click');
+                  setShowInviteModal(true);
+                }}
+                title="Invite Friends to Server"
+                className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-2xl xs:rounded-[20px] sm:rounded-[24px] hover:rounded-xl xs:hover:rounded-[14px] sm:hover:rounded-[16px] bg-[#1a1a24] hover:bg-cyan-600 text-cyan-400 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md active:scale-95 border border-cyan-500/30"
+              >
+                <UserPlus size={15} className="sm:w-5 sm:h-5" />
+              </button>
+            </div>
           </div>
 
-          {/* Join Server via Invite Button */}
-          <div className="relative group flex items-center justify-center w-full">
-            <button
-              onClick={() => {
-                SoundEffectEngine.play('button-click');
-                setShowJoinServerModal(true);
-              }}
-              title="Join Server with Invite Link or Code"
-              className="w-12 h-12 rounded-[24px] hover:rounded-[16px] bg-[#1a1a24] hover:bg-purple-600 text-purple-400 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md group-hover:shadow-purple-500/30 active:scale-95 border border-purple-500/30 hover:border-purple-500"
-            >
-              <Compass size={20} />
-            </button>
-          </div>
-
-          {/* Invite Friends / Share Server */}
-          <div className="relative group flex items-center justify-center w-full">
-            <button
-              onClick={() => {
-                SoundEffectEngine.play('button-click');
-                setShowInviteModal(true);
-              }}
-              title="Invite Friends to Server"
-              className="w-12 h-12 rounded-[24px] hover:rounded-[16px] bg-[#1a1a24] hover:bg-cyan-600 text-cyan-400 hover:text-white flex items-center justify-center transition-all duration-300 shadow-md active:scale-95 border border-cyan-500/30"
-            >
-              <UserPlus size={20} />
-            </button>
-          </div>
         </div>
 
-      </div>
-
-      {/* ======================================================== */}
-      {/* 2. CHANNELS SIDEBAR (MIDDLE COLUMN) */}
-      {/* ======================================================== */}
-      <div className="w-60 md:w-64 bg-[#121217] border-r border-white/5 flex flex-col shrink-0 z-10 select-none">
+        {/* ======================================================== */}
+        {/* 2. CHANNELS SIDEBAR (MIDDLE COLUMN) */}
+        {/* ======================================================== */}
+        <div className={`w-36 xs:w-44 sm:w-56 md:w-64 bg-[#121217] border-r border-white/5 flex flex-col shrink-0 z-10 select-none ${
+          activeViewMode === 'dashboard' && selectedDmUser !== null ? 'hidden sm:flex' : 'flex'
+        }`}>
         
-        {/* Server Header Dropdown */}
-        <div className="relative" ref={serverMenuRef}>
+        {activeViewMode === 'dashboard' ? (
+          <>
+            {/* Find or start a conversation search header */}
+            <div className="h-14 px-3 border-b border-white/5 flex items-center shrink-0">
+              <div className="relative w-full">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input
+                  ref={dmSearchInputRef}
+                  type="text"
+                  value={dmSearchQuery}
+                  onChange={(e) => setDmSearchQuery(e.target.value)}
+                  placeholder="Find or start a conversation"
+                  className="w-full pl-8 pr-7 py-1.5 rounded-lg bg-[#09090b] border border-white/10 hover:border-white/20 focus:border-purple-500/50 text-xs text-white placeholder-slate-500 focus:outline-none transition-all"
+                />
+                {dmSearchQuery && (
+                  <button 
+                    onClick={() => setDmSearchQuery('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white p-0.5"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* DM sidebar items */}
+            <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1 custom-scrollbar">
+              {/* Friends Tab */}
+              <button
+                onClick={() => {
+                  SoundEffectEngine.play('button-click');
+                  setSelectedDmUser(null);
+                }}
+                className={`w-full px-3 py-2.5 rounded-xl font-bold text-sm flex items-center justify-between transition-all group ${
+                  selectedDmUser === null
+                    ? 'bg-purple-600/20 text-purple-200 border border-purple-500/30 shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <Users size={18} className={selectedDmUser === null ? 'text-purple-400' : 'text-slate-400 group-hover:text-white'} />
+                  <span className="truncate">Friends</span>
+                </div>
+                {INITIAL_REQUESTS.length > 0 && (
+                  <span className="bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full shadow-sm shrink-0">
+                    {INITIAL_REQUESTS.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Direct Messages Header */}
+              <div className="flex items-center justify-between px-3 pt-4 pb-1 text-[11px] font-black tracking-wider text-slate-500 uppercase">
+                <span>Direct Messages</span>
+                <button
+                  onClick={() => {
+                    SoundEffectEngine.play('button-click');
+                    setSelectedDmUser(null);
+                  }}
+                  title="Find Friends / Start Chat"
+                  className="p-1 hover:text-white text-slate-400 rounded transition-colors"
+                >
+                  <Plus size={14} />
+                </button>
+              </div>
+
+              {/* Friends DM List */}
+              {filteredDmFriends.map((friend) => {
+                const isSelected = selectedDmUser?.id === friend.id;
+                const statusColor = 
+                  friend.status === 'online' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' :
+                  friend.status === 'idle' ? 'bg-amber-500' :
+                  friend.status === 'dnd' ? 'bg-rose-500' : 'bg-slate-600';
+
+                return (
+                  <div
+                    key={friend.id}
+                    onClick={() => {
+                      SoundEffectEngine.play('button-click');
+                      setSelectedDmUser(friend);
+                    }}
+                    onDoubleClick={() => {
+                      SoundEffectEngine.play('button-click');
+                      setSelectedDmUser(friend);
+                    }}
+                    className={`w-full px-2.5 py-2 rounded-xl flex items-center gap-3 cursor-pointer group transition-all relative ${
+                      isSelected
+                        ? 'bg-purple-600/20 text-white border border-purple-500/30'
+                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    {/* Friend Avatar with Status */}
+                    <div className="relative shrink-0">
+                      <img
+                        src={friend.avatar}
+                        alt={friend.username}
+                        className="w-9 h-9 rounded-xl object-cover ring-1 ring-white/10 group-hover:ring-purple-400/50 transition-all"
+                      />
+                      <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#121217] ${statusColor}`} />
+                    </div>
+
+                    {/* Friend Name & Game Activity */}
+                    <div className="flex-1 min-w-0 text-left">
+                      <div className="flex items-center justify-between">
+                        <span className={`font-bold text-xs truncate ${isSelected ? 'text-purple-300' : 'text-slate-200 group-hover:text-white'}`}>
+                          {friend.username}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 truncate flex items-center gap-1 mt-0.5">
+                        {friend.activity ? (
+                          <>
+                            <Zap size={10} className="text-yellow-500 shrink-0" />
+                            <span className="truncate">{friend.activity}</span>
+                          </>
+                        ) : (
+                          <span className="capitalize">{friend.status}</span>
+                        )}
+                      </p>
+                    </div>
+
+                    {/* Quick close button on hover */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (selectedDmUser?.id === friend.id) setSelectedDmUser(null);
+                        setFriendsList(prev => prev.filter(f => f.id !== friend.id));
+                      }}
+                      title="Close DM"
+                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded-md text-slate-400 hover:text-white transition-opacity shrink-0"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                );
+              })}
+
+              {filteredDmFriends.length === 0 && (
+                <div className="py-6 px-3 text-center text-slate-500 text-xs">
+                  No direct messages match "{dmSearchQuery}"
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Server Header Dropdown */}
+            <div className="relative" ref={serverMenuRef}>
           <button
             onClick={() => {
               SoundEffectEngine.play('button-click');
@@ -1180,6 +1412,14 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
                                 setSelectedChannelId(channel.id);
                               }
                             }}
+                            onDoubleClick={() => {
+                              SoundEffectEngine.play('button-click');
+                              if (channel.type === 'voice') {
+                                handleToggleVoiceChannel(channel);
+                              } else {
+                                setSelectedChannelId(channel.id);
+                              }
+                            }}
                             className={`w-full px-2.5 py-1.5 rounded-xl flex items-center justify-between text-xs font-bold transition-all ${
                               isSelected
                                 ? 'bg-purple-600/20 text-purple-200 border border-purple-500/30'
@@ -1260,6 +1500,8 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
             );
           })}
         </div>
+          </>
+        )}
 
         {/* Voice Connected Status Widget (Appears when active in a voice room) with Mute & Deafen User Controls */}
         {activeVoiceChannel && (
@@ -1414,39 +1656,62 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
           </div>
         </div>
 
-      </div>
+        </div> {/* End Column 2 (Middle Sidebar) */}
 
       {/* ======================================================== */}
-      {/* 3. MAIN CHAT / STAGE AREA */}
+      {/* 3. MAIN CHAT / SOCIAL HUB / DM STAGE AREA */}
       {/* ======================================================== */}
-      <div className="flex-1 flex flex-col bg-[#09090b] min-w-0 overflow-hidden relative">
+      {activeViewMode === 'dashboard' ? (
+        <div className="flex-1 flex flex-col bg-[#09090b] min-w-0 overflow-hidden relative w-full h-full">
+          {selectedDmUser === null ? (
+            <FriendsView 
+              onOpenDM={(user) => {
+                SoundEffectEngine.play('button-click');
+                setSelectedDmUser(user);
+              }} 
+            />
+          ) : (
+            <ChatView 
+              hideSidebar={true}
+              initialFriend={selectedDmUser} 
+              onClearFriend={() => {
+                setSelectedDmUser(null);
+              }} 
+              onNavigate={onNavigate} 
+              onCall={onCall} 
+            />
+          )}
+        </div>
+      ) : (
+        <>
+          <div className="flex-1 flex flex-col bg-[#09090b] min-w-0 overflow-hidden relative w-full h-full">
         
         {/* Channel Header Bar */}
-        <div className="h-14 px-4 border-b border-white/5 flex items-center justify-between shrink-0 bg-[#09090b]/80 backdrop-blur-md z-10">
-          <div className="flex items-center gap-2.5 min-w-0">
+        <div className="h-11 xs:h-12 sm:h-14 px-2 xs:px-3 sm:px-4 border-b border-white/5 flex items-center justify-between shrink-0 bg-[#09090b]/80 backdrop-blur-md z-10">
+          <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 min-w-0">
             {currentChannel?.type === 'voice' ? (
-              <Volume2 size={20} className="text-emerald-400 shrink-0" />
+              <Volume2 className="text-emerald-400 w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 shrink-0" />
             ) : currentChannel?.type === 'announcement' ? (
-              <Radio size={20} className="text-amber-400 shrink-0" />
+              <Radio className="text-amber-400 w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 shrink-0" />
             ) : (
-              <Hash size={20} className="text-slate-400 shrink-0" />
+              <Hash className="text-slate-400 w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 shrink-0" />
             )}
             
-            <h2 className="font-black text-sm md:text-base text-white truncate">
+            <h2 className="font-black text-xs xs:text-sm md:text-base text-white truncate">
               {currentChannel?.name || 'select-channel'}
             </h2>
 
             {currentChannel?.topic && (
               <>
-                <div className="h-4 w-[1px] bg-white/10 hidden md:block shrink-0" />
-                <p className="text-xs text-slate-400 truncate max-w-md hidden md:block">
+                <div className="h-3.5 sm:h-4 w-[1px] bg-white/10 hidden md:block shrink-0" />
+                <p className="text-[11px] sm:text-xs text-slate-400 truncate max-w-md hidden md:block">
                   {currentChannel.topic}
                 </p>
               </>
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-slate-400 shrink-0">
+          <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2 text-slate-400 shrink-0">
             {/* Search Input */}
             <div className="relative hidden sm:block">
               <Search size={14} className="absolute left-2.5 top-2.5 text-slate-500" />
@@ -1455,7 +1720,7 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search channel..."
-                className="w-36 md:w-48 pl-8 pr-3 py-1.5 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 transition-all"
+                className="w-32 md:w-48 pl-8 pr-3 py-1.5 rounded-xl bg-white/5 border border-white/5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 transition-all"
               />
             </div>
 
@@ -1465,28 +1730,28 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
                 SoundEffectEngine.play('button-click');
                 setShowActivityOverlay(!showActivityOverlay);
               }}
-              className={`p-2 rounded-xl hover:bg-white/5 transition-colors ${showActivityOverlay ? 'text-emerald-400 bg-emerald-500/10' : ''}`}
+              className={`p-1.5 xs:p-2 rounded-lg sm:rounded-xl hover:bg-white/5 transition-colors ${showActivityOverlay ? 'text-emerald-400 bg-emerald-500/10' : ''}`}
               title="Toggle Live In-Channel Voice & Activity Radar"
             >
-              <Activity size={17} />
+              <Activity className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-4.5 sm:h-4.5" />
             </button>
 
             {/* Pinned Messages Toggle */}
             <button
               onClick={() => setShowPinnedDrawer(!showPinnedDrawer)}
-              className={`p-2 rounded-xl hover:bg-white/5 transition-colors ${showPinnedDrawer ? 'text-amber-400 bg-amber-500/10' : ''}`}
+              className={`p-1.5 xs:p-2 rounded-lg sm:rounded-xl hover:bg-white/5 transition-colors ${showPinnedDrawer ? 'text-amber-400 bg-amber-500/10' : ''}`}
               title="Pinned Messages"
             >
-              <Pin size={17} />
+              <Pin className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-4.5 sm:h-4.5" />
             </button>
 
             {/* Member List Toggle */}
             <button
               onClick={() => setShowMembersList(!showMembersList)}
-              className={`p-2 rounded-xl hover:bg-white/5 transition-colors ${showMembersList ? 'text-purple-400 bg-purple-500/10' : ''}`}
+              className={`p-1.5 xs:p-2 rounded-lg sm:rounded-xl hover:bg-white/5 transition-colors ${showMembersList ? 'text-purple-400 bg-purple-500/10' : ''}`}
               title="Toggle Member List"
             >
-              <Users size={17} />
+              <Users className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-4.5 sm:h-4.5" />
             </button>
           </div>
         </div>
@@ -1762,8 +2027,8 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
         )}
 
         {/* Discord-style Message Input Box */}
-        <div className="p-4 pt-1">
-          <div className="relative bg-[#16161e] border border-white/10 rounded-2xl p-2.5 flex items-center gap-2 shadow-xl focus-within:border-purple-500/50 transition-all">
+        <div className="p-2 xs:p-3 sm:p-4 pt-1 shrink-0">
+          <div className="relative bg-[#16161e] border border-white/10 rounded-xl sm:rounded-2xl p-1.5 xs:p-2 sm:p-2.5 flex items-center gap-1.5 sm:gap-2 shadow-xl focus-within:border-purple-500/50 transition-all">
             
             {/* Attachment Button */}
             <button
@@ -1778,9 +2043,9 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
                 setMessages(ServerService.getMessages(selectedChannelId));
               }}
               title="Add Image Attachment"
-              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors shrink-0"
             >
-              <Plus size={18} />
+              <Plus className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             </button>
 
             {/* Text Input */}
@@ -1795,17 +2060,17 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
                 }
               }}
               placeholder={`Message #${currentChannel?.name || 'channel'}`}
-              className="flex-1 bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none"
+              className="flex-1 bg-transparent text-xs xs:text-sm text-white placeholder-slate-500 focus:outline-none min-w-0"
             />
 
             {/* Quick Emoji Trigger Button */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 title="Gaming Emojis"
-                className="p-2 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
               >
-                <Smile size={18} />
+                <Smile className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               </button>
 
               {/* Emoji Picker Popover */}
@@ -1832,9 +2097,9 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
               onClick={handleSendMessage}
               disabled={!inputText.trim()}
               title="Send Message (Enter)"
-              className="p-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white disabled:opacity-40 disabled:hover:bg-purple-600 transition-all shadow-md active:scale-95"
+              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-purple-600 hover:bg-purple-500 text-white disabled:opacity-40 disabled:hover:bg-purple-600 transition-all shadow-md active:scale-95 shrink-0"
             >
-              <Send size={16} />
+              <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
 
           </div>
@@ -1848,7 +2113,7 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
       {/* 4. SERVER MEMBERS LIST DRAWER (RIGHT-MOST COLUMN) */}
       {/* ======================================================== */}
       {showMembersList && (
-        <div className="w-56 md:w-60 bg-[#101015] border-l border-white/5 flex flex-col shrink-0 custom-scrollbar overflow-y-auto p-3 space-y-4 select-none">
+        <div className="hidden lg:flex w-56 md:w-60 bg-[#101015] border-l border-white/5 flex flex-col shrink-0 custom-scrollbar overflow-y-auto p-3 space-y-4 select-none">
           
           {/* Members grouped by Roles */}
           {currentServer?.roles.map((role) => {
@@ -1918,6 +2183,8 @@ export const ServersView: React.FC<ServersViewProps> = ({ onNavigate, onOpenDM, 
           })}
 
         </div>
+      )}
+        </>
       )}
 
       </div> {/* End Main Workspace */}

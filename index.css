@@ -1,0 +1,139 @@
+:root {
+  /* ======================================================== */
+  /* FLUID TYPOGRAPHY SCALE (using clamp())                    */
+  /* Smoothly interpolates from 360px (mobile) to 1440px (wide) */
+  /* ======================================================== */
+  --text-2xs: clamp(0.625rem, 0.58rem + 0.2vw, 0.75rem);     /* ~10px -> ~12px */
+  --text-xs: clamp(0.6875rem, 0.625rem + 0.28vw, 0.8125rem); /* ~11px -> ~13px */
+  --text-sm: clamp(0.75rem, 0.7rem + 0.35vw, 0.875rem);      /* ~12px -> ~14px */
+  --text-base: clamp(0.875rem, 0.825rem + 0.45vw, 1rem);     /* ~14px -> ~16px */
+  --text-lg: clamp(1rem, 0.925rem + 0.6vw, 1.1875rem);       /* ~16px -> ~19px */
+  --text-xl: clamp(1.125rem, 1rem + 0.85vw, 1.375rem);       /* ~18px -> ~22px */
+  --text-2xl: clamp(1.25rem, 1.1rem + 1.2vw, 1.75rem);       /* ~20px -> ~28px */
+  --text-3xl: clamp(1.5rem, 1.25rem + 1.8vw, 2.125rem);      /* ~24px -> ~34px */
+  --text-4xl: clamp(1.875rem, 1.45rem + 2.5vw, 2.75rem);     /* ~30px -> ~44px */
+  --text-5xl: clamp(2.25rem, 1.7rem + 3.5vw, 3.5rem);        /* ~36px -> ~56px */
+  --text-6xl: clamp(2.75rem, 1.95rem + 4.8vw, 4.5rem);       /* ~44px -> ~72px */
+  --text-7xl: clamp(3.25rem, 2.2rem + 6.2vw, 5.5rem);        /* ~52px -> ~88px */
+
+  /* ======================================================== */
+  /* FLUID SPACING SCALE (using clamp())                       */
+  /* ======================================================== */
+  --space-3xs: clamp(0.25rem, 0.22rem + 0.12vw, 0.375rem);
+  --space-2xs: clamp(0.375rem, 0.33rem + 0.18vw, 0.5rem);
+  --space-xs: clamp(0.5rem, 0.45rem + 0.25vw, 0.75rem);
+  --space-sm: clamp(0.75rem, 0.68rem + 0.35vw, 1rem);
+  --space-md: clamp(1rem, 0.9rem + 0.5vw, 1.5rem);
+  --space-lg: clamp(1.25rem, 1.1rem + 0.75vw, 2rem);
+  --space-xl: clamp(1.5rem, 1.3rem + 1vw, 2.5rem);
+  --space-2xl: clamp(2rem, 1.7rem + 1.5vw, 3.5rem);
+  --space-3xl: clamp(2.5rem, 2rem + 2.2vw, 4.5rem);
+}
+
+/* Base Typographic Hierarchy with Clamp */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: var(--text-4xl);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--text-2xl);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+h3 {
+  font-size: var(--text-xl);
+  line-height: 1.25;
+}
+
+h4 {
+  font-size: var(--text-lg);
+  line-height: 1.3;
+}
+
+small {
+  font-size: var(--text-xs);
+}
+
+/* ======================================================== */
+/* FLUID TYPOGRAPHY UTILITY CLASSES                          */
+/* ======================================================== */
+.text-fluid-2xs { font-size: var(--text-2xs); line-height: 1.3; }
+.text-fluid-xs  { font-size: var(--text-xs); line-height: 1.35; }
+.text-fluid-sm  { font-size: var(--text-sm); line-height: 1.4; }
+.text-fluid-base{ font-size: var(--text-base); line-height: 1.5; }
+.text-fluid-lg  { font-size: var(--text-lg); line-height: 1.45; }
+.text-fluid-xl  { font-size: var(--text-xl); line-height: 1.35; }
+.text-fluid-2xl { font-size: var(--text-2xl); line-height: 1.25; }
+.text-fluid-3xl { font-size: var(--text-3xl); line-height: 1.2; }
+.text-fluid-4xl { font-size: var(--text-4xl); line-height: 1.15; }
+.text-fluid-5xl { font-size: var(--text-5xl); line-height: 1.1; }
+.text-fluid-6xl { font-size: var(--text-6xl); line-height: 1.05; }
+.text-fluid-7xl { font-size: var(--text-7xl); line-height: 1; }
+
+/* Global Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+}
+
+/* ======================================================== */
+/* FLUID ICONS & CONTROLS SCALING                            */
+/* ======================================================== */
+:root {
+  --icon-2xs: clamp(0.7rem, 0.62rem + 0.3vw, 0.825rem);
+  --icon-xs:  clamp(0.8rem, 0.72rem + 0.35vw, 0.95rem);
+  --icon-sm:  clamp(0.95rem, 0.85rem + 0.4vw, 1.15rem);
+  --icon-base:clamp(1.1rem, 0.95rem + 0.5vw, 1.35rem);
+  --icon-lg:  clamp(1.25rem, 1.05rem + 0.7vw, 1.65rem);
+  --icon-xl:  clamp(1.5rem, 1.25rem + 1vw, 2.1rem);
+  --icon-2xl: clamp(1.85rem, 1.5rem + 1.4vw, 2.75rem);
+}
+
+.icon-fluid-2xs { width: var(--icon-2xs); height: var(--icon-2xs); }
+.icon-fluid-xs  { width: var(--icon-xs);  height: var(--icon-xs); }
+.icon-fluid-sm  { width: var(--icon-sm);  height: var(--icon-sm); }
+.icon-fluid-base{ width: var(--icon-base);height: var(--icon-base); }
+.icon-fluid-lg  { width: var(--icon-lg);  height: var(--icon-lg); }
+.icon-fluid-xl  { width: var(--icon-xl);  height: var(--icon-xl); }
+.icon-fluid-2xl { width: var(--icon-2xl); height: var(--icon-2xl); }
+
+/* Global Adaptive Text Boxes & Form Inputs */
+input, textarea, select {
+  font-size: var(--text-sm);
+  max-width: 100%;
+}
+
+/* Fluid Lucide Icon wrapper helper */
+svg.lucide {
+  flex-shrink: 0;
+}
+
+/* Touch action optimization for adaptive buttons & elements */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Safe viewport height adjustments across mobile browsers */
+.h-dvh-safe {
+  height: 100dvh;
+  max-height: 100dvh;
+}

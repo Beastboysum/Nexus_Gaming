@@ -81,9 +81,10 @@ interface ChatViewProps {
     onClearFriend?: () => void;
     onNavigate?: (view: ViewState) => void;
     onCall?: (user: User) => void;
+    hideSidebar?: boolean;
 }
 
-export const ChatView: React.FC<ChatViewProps> = ({ initialFriend, onClearFriend, onNavigate, onCall }) => {
+export const ChatView: React.FC<ChatViewProps> = ({ initialFriend, onClearFriend, onNavigate, onCall, hideSidebar = false }) => {
   // State: dedicated to Direct Messages and Groups
   const [activeMode, setActiveMode] = useState<ChatMode>('DM');
   const [selectedDmUserId, setSelectedDmUserId] = useState<string | null>(initialFriend?.id || '2');
@@ -652,91 +653,104 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialFriend, onClearFriend
       )}
 
       {/* --- 1. LIST VIEW (Mobile: Hidden when chat open / Desktop: Sidebar) --- */}
-      <div className={`
-        ${isMobileChatOpen ? 'hidden md:flex' : 'flex'} 
-        md:w-72 w-full flex-col shrink-0 bg-[#09090b] md:bg-[#121216] md:rounded-[2rem] md:border border-white/5 md:shadow-2xl overflow-hidden z-10
-      `}>
-        
-        {/* Sidebar Header */}
-        <div className="p-4 border-b border-white/5 bg-[#09090b]">
-            <div className="flex bg-[#1e1f24] p-1 rounded-xl border border-white/5">
-                <button 
-                    onClick={() => {
-                        SoundEffectEngine.play('button-click');
-                        setActiveMode('DM');
-                    }}
-                    className={`flex-1 text-xs font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 ${activeMode === 'DM' ? 'bg-[#2b2d31] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
-                >
-                    <Users size={14} /> DMs
-                </button>
-                <button 
-                    onClick={() => {
-                        SoundEffectEngine.play('button-click');
-                        setActiveMode('GROUP');
-                    }}
-                    className={`flex-1 text-xs font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 ${activeMode === 'GROUP' ? 'bg-[#2b2d31] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
-                >
-                    <MessageSquare size={14} /> Squads
-                </button>
-            </div>
-        </div>
+      {!hideSidebar && (
+        <div className={`
+          ${isMobileChatOpen ? 'hidden md:flex' : 'flex'} 
+          md:w-72 w-full flex-col shrink-0 bg-[#09090b] md:bg-[#121216] md:rounded-[2rem] md:border border-white/5 md:shadow-2xl overflow-hidden z-10
+        `}>
+          
+          {/* Sidebar Header */}
+          <div className="p-4 border-b border-white/5 bg-[#09090b]">
+              <div className="flex bg-[#1e1f24] p-1 rounded-xl border border-white/5">
+                  <button 
+                      onClick={() => {
+                          SoundEffectEngine.play('button-click');
+                          setActiveMode('DM');
+                      }}
+                      className={`flex-1 text-xs font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 ${activeMode === 'DM' ? 'bg-[#2b2d31] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+                  >
+                      <Users size={14} /> DMs
+                  </button>
+                  <button 
+                      onClick={() => {
+                          SoundEffectEngine.play('button-click');
+                          setActiveMode('GROUP');
+                      }}
+                      className={`flex-1 text-xs font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 ${activeMode === 'GROUP' ? 'bg-[#2b2d31] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+                  >
+                      <MessageSquare size={14} /> Squads
+                  </button>
+              </div>
+          </div>
 
-        {/* Sidebar List */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
-            {activeMode === 'GROUP' ? (
-                <>
-                    <div className="flex items-center justify-between px-4 py-2">
-                        <span className="text-xs font-bold text-slate-500 uppercase">Squad Groups</span>
-                        <button onClick={() => setShowCreateGroup(true)} title="Create Group"><Plus size={16} className="text-slate-400 hover:text-white" /></button>
-                    </div>
-                    {groups.map(group => (
-                        <div key={group.id} onClick={() => handleOpenChat('GROUP', group.id)} className={`flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer ${selectedGroupId === group.id ? 'bg-purple-600/15 border border-purple-500/30' : ''}`}>
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${group.iconColor}`}>{group.name.substring(0,2).toUpperCase()}</div>
-                            <div className="flex-1 min-w-0">
-                                <div className="font-bold text-sm text-white truncate">{group.name}</div>
-                                <div className="text-xs text-slate-500 truncate">{group.lastMessage}</div>
-                            </div>
-                        </div>
-                    ))}
-                </>
-            ) : (
-                <>
-                    <div className="px-4 py-2 text-xs font-bold text-slate-500 uppercase">Direct Messages</div>
-                    {Object.values(USERS).filter(u => u.id !== '1').map(user => {
-                        const thread = DM_THREADS.find(t => t.userId === user.id);
-                        const isSelected = selectedDmUserId === user.id;
-                        return (
-                            <div key={user.id} onClick={() => handleOpenChat('DM', user.id)} className={`flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer group ${isSelected ? 'bg-purple-600/15 border border-purple-500/30' : ''}`}>
-                                <div className="relative">
-                                    <img 
-                                        src={user.avatar} 
-                                        className="w-10 h-10 rounded-xl cursor-pointer hover:opacity-80 transition-opacity" 
-                                        onClick={(e) => handleOpenProfile(e, user.id)}
-                                    />
-                                    <div className={`absolute -bottom-1 -right-1 w-3 h-3 border-2 border-[#09090b] rounded-full ${user.status === 'online' ? 'bg-green-500' : user.status === 'idle' ? 'bg-amber-500' : 'bg-slate-500'}`}></div>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between"><span className="font-bold text-sm text-white">{user.username}</span><span className="text-[10px] text-slate-500">{thread?.time || '2m'}</span></div>
-                                    <div className="text-xs text-slate-500 truncate">{thread?.lastMessage || 'Hey, let\'s team up!'}</div>
-                                </div>
-                            </div>
-                        )
-                    })}
-                </>
-            )}
+          {/* Sidebar List */}
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+              {activeMode === 'GROUP' ? (
+                  <>
+                      <div className="flex items-center justify-between px-4 py-2">
+                          <span className="text-xs font-bold text-slate-500 uppercase">Squad Groups</span>
+                          <button onClick={() => setShowCreateGroup(true)} title="Create Group"><Plus size={16} className="text-slate-400 hover:text-white" /></button>
+                      </div>
+                      {groups.map(group => (
+                          <div key={group.id} onClick={() => handleOpenChat('GROUP', group.id)} className={`flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer ${selectedGroupId === group.id ? 'bg-purple-600/15 border border-purple-500/30' : ''}`}>
+                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${group.iconColor}`}>{group.name.substring(0,2).toUpperCase()}</div>
+                              <div className="flex-1 min-w-0">
+                                  <div className="font-bold text-sm text-white truncate">{group.name}</div>
+                                  <div className="text-xs text-slate-500 truncate">{group.lastMessage}</div>
+                              </div>
+                          </div>
+                      ))}
+                  </>
+              ) : (
+                  <>
+                      <div className="px-4 py-2 text-xs font-bold text-slate-500 uppercase">Direct Messages</div>
+                      {Object.values(USERS).filter(u => u.id !== '1').map(user => {
+                          const thread = DM_THREADS.find(t => t.userId === user.id);
+                          const isSelected = selectedDmUserId === user.id;
+                          return (
+                              <div key={user.id} onClick={() => handleOpenChat('DM', user.id)} className={`flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 cursor-pointer group ${isSelected ? 'bg-purple-600/15 border border-purple-500/30' : ''}`}>
+                                  <div className="relative">
+                                      <img 
+                                          src={user.avatar} 
+                                          className="w-10 h-10 rounded-xl cursor-pointer hover:opacity-80 transition-opacity" 
+                                          onClick={(e) => handleOpenProfile(e, user.id)}
+                                      />
+                                      <div className={`absolute -bottom-1 -right-1 w-3 h-3 border-2 border-[#09090b] rounded-full ${user.status === 'online' ? 'bg-green-500' : user.status === 'idle' ? 'bg-amber-500' : 'bg-slate-500'}`}></div>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                      <div className="flex justify-between"><span className="font-bold text-sm text-white">{user.username}</span><span className="text-[10px] text-slate-500">{thread?.time || '2m'}</span></div>
+                                      <div className="text-xs text-slate-500 truncate">{thread?.lastMessage || 'Hey, let\'s team up!'}</div>
+                                  </div>
+                              </div>
+                          )
+                      })}
+                  </>
+              )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* --- 2. MAIN CHAT AREA (Mobile: Full screen when open / Desktop: Flex) --- */}
       <div className={`
-         ${isMobileChatOpen ? 'flex' : 'hidden md:flex'} 
-         flex-1 flex-col min-w-0 bg-[#09090b] md:bg-[#121216] md:rounded-[2rem] md:border border-white/5 md:shadow-2xl overflow-hidden relative
+         ${hideSidebar ? 'flex' : (isMobileChatOpen ? 'flex' : 'hidden md:flex')} 
+         flex-1 flex-col min-w-0 bg-[#09090b] md:bg-[#121216] md:rounded-[2rem] md:border border-white/5 md:shadow-2xl overflow-hidden relative w-full h-full
       `}>
          
          {/* Top Bar */}
          <div className="h-16 flex items-center justify-between px-4 shrink-0 bg-[#09090b]/90 backdrop-blur-md border-b border-white/5 z-20 sticky top-0">
             <div className="flex items-center gap-3">
-                <button onClick={handleBackToList} className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white"><ArrowLeft size={20}/></button>
+                {(hideSidebar || isMobileChatOpen) && (
+                  <button 
+                    onClick={() => {
+                      handleBackToList();
+                      if (onClearFriend) onClearFriend();
+                    }} 
+                    className={`${hideSidebar ? 'flex' : 'md:hidden flex'} p-2 -ml-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors items-center justify-center`}
+                    title="Back to Friends"
+                  >
+                    <ArrowLeft size={20}/>
+                  </button>
+                )}
                 {activeMode === 'GROUP' && selectedGroupId ? (
                      <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-lg ${groups.find(g => g.id === selectedGroupId)?.iconColor} flex items-center justify-center font-bold text-xs`}>{groups.find(g => g.id === selectedGroupId)?.name.substring(0,2)}</div>

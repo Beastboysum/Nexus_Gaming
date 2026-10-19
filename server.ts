@@ -11,8 +11,18 @@ const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 
-// Initialize GoogleGenAI SDK (reads GEMINI_API_KEY from environment)
-const ai = new GoogleGenAI();
+// Initialize GoogleGenAI SDK safely
+let ai: GoogleGenAI | null = null;
+try {
+  ai = new GoogleGenAI();
+} catch (e) {
+  console.warn('GoogleGenAI initialization warning:', e);
+}
+
+// Health check endpoint
+app.get('/health', (_req, res) => {
+  res.status(200).send('OK');
+});
 
 // --- POST /api/meta-pulse ---
 // Uses gemini-3.5-flash with googleSearch tool for real-time live gaming & esports intelligence
@@ -128,12 +138,177 @@ app.get('/api/trending-pulse', (_req, res) => {
   });
 });
 
+// --- POST /api/search-media ---
+// Searches for ANY YouTube video, creator channel, or Twitch channel with original thumbnails and channels in Nexus theme
+app.post('/api/search-media', async (req, res) => {
+  try {
+    const { query, juniorMode = false } = req.body;
+
+    if (!query || typeof query !== 'string' || !query.trim()) {
+      res.json({ channels: [], videos: [] });
+      return;
+    }
+
+    const trimmedQuery = query.trim();
+
+    if (!ai) {
+      res.json({ channels: [], videos: [] });
+      return;
+    }
+
+    const systemInstruction = `You are the Nexus Gaming Media Discovery Engine.
+Your task is to find real YouTube gaming videos, YouTube creator channels, and Twitch live stream channels matching the user's query.
+Requirements:
+1. If searching for a person or creator (e.g. MrBeast, PewDiePie, DanTDM, Shroud, TenZ, Tarik, Markiplier, Kai Cenat, Ninja, Aphmau, TommyInnit, etc.):
+   - Provide the creator's channel with their authentic handle (e.g. @MrBeast), platform ("youtube", "twitch", or "both"), subscriber count, avatar URL, bio, and 3-5 real video titles with real 11-character YouTube video IDs.
+2. If searching for a game or video topic (e.g. "Minecraft 100 days", "GTA 6 trailer", "Valorant clutch", "Roblox obby"):
+   - Return 4-8 matching YouTube videos with their authentic titles, real 11-character YouTube video IDs, creator name, views, and duration.
+3. Every video MUST have an authentic 11-character YouTube ID (e.g., "W_7LqXj2C70", "kJQP7kiw5Fk", "0e3GPea1Tyg", "j6rF0_3s4tE").
+4. If juniorMode is true, only return kid-friendly content (Minecraft, Roblox, Nintendo, LEGO).
+Output format MUST be strictly a JSON object:
+{
+  "channels": [
+    {
+      "id": "slug",
+      "name": "Display Name",
+      "handle": "@handle",
+      "platform": "youtube" | "twitch" | "both",
+      "avatar": "https://...",
+      "banner": "https://...",
+      "subscribers": "e.g. 24M subscribers",
+      "verified": true,
+      "bio": "1-2 sentence channel description",
+      "category": "Gaming Category",
+      "twitchChannel": "optional_twitch_name",
+      "kidFriendly": boolean,
+      "videos": [
+        {
+          "id": "vid-slug",
+          "title": "Video Title",
+          "youtubeId": "11-char-id",
+          "author": "Creator Name",
+          "views": "1.2M views",
+          "duration": "14:20",
+          "category": "Category",
+          "kidFriendly": boolean
+        }
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-slug",
+      "title": "Video Title",
+      "youtubeId": "11-char-id",
+      "author": "Creator Name",
+      "channelAvatar": "https://...",
+      "views": "2.4M views",
+      "duration": "12:45",
+      "category": "Category",
+      "description": "Short description",
+      "kidFriendly": boolean
+    }
+  ]
+}
+Return ONLY pure JSON without markdown backticks or commentary.`;
+
+    const promptText = `Find authentic YouTube videos and creator channels for the gaming query: "${trimmedQuery}". Kid-friendly filter: ${juniorMode ? 'ON' : 'OFF'}.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: promptText,
+      config: {
+        systemInstruction,
+        tools: [{ googleSearch: {} }],
+      },
+    });
+
+    const rawText = response.text || '{}';
+    // Clean potential markdown code blocks
+    const cleanJson = rawText
+      .replace(/```json/gi, '')
+      .replace(/```/g, '')
+      .trim();
+
+    let parsed: any = {};
+    try {
+      parsed = JSON.parse(cleanJson);
+    } catch {
+      // If parsing fails, try extracting first JSON object
+      const match = cleanJson.match(/\{[\s\S]*\}/);
+      if (match) {
+        parsed = JSON.parse(match[0]);
+      }
+    }
+
+    // Format and sanitize channels
+    const channels = Array.isArray(parsed.channels) ? parsed.channels.map((c: any) => ({
+      id: c.id || c.handle?.replace('@', '').toLowerCase() || `chan-${Date.now()}`,
+      name: c.name || trimmedQuery,
+      handle: c.handle || `@${c.name?.replace(/\s+/g, '')}`,
+      platform: c.platform || 'youtube',
+      avatar: c.avatar || 'https://picsum.photos/100/100?random=88',
+      banner: c.banner || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1600&auto=format&fit=crop',
+      subscribers: c.subscribers || '1.2M subscribers',
+      verified: c.verified ?? true,
+      bio: c.bio || `Official channel of ${c.name} in Nexus.`,
+      category: c.category || 'Gaming',
+      twitchChannel: c.twitchChannel,
+      kidFriendly: c.kidFriendly ?? juniorMode,
+      videos: Array.isArray(c.videos) ? c.videos.map((v: any, idx: number) => {
+        const yId = v.youtubeId || 'W_7LqXj2C70';
+        return {
+          id: v.id || `${c.id}-vid-${idx}`,
+          title: v.title || `${c.name} Gaming Stream`,
+          thumbnail: `https://img.youtube.com/vi/${yId}/hqdefault.jpg`,
+          views: v.views || '850K views',
+          author: c.name,
+          duration: v.duration || '15:00',
+          category: v.category || c.category || 'Gaming',
+          sourceType: 'youtube',
+          youtubeId: yId,
+          videoUrl: `https://www.youtube.com/watch?v=${yId}`,
+          channelAvatar: c.avatar,
+          kidFriendly: v.kidFriendly ?? c.kidFriendly
+        };
+      }) : []
+    })) : [];
+
+    // Format and sanitize videos with authentic YouTube thumbnails
+    const videos = Array.isArray(parsed.videos) ? parsed.videos.map((v: any, idx: number) => {
+      const yId = v.youtubeId || 'W_7LqXj2C70';
+      return {
+        id: v.id || `search-vid-${idx}`,
+        title: v.title || `${trimmedQuery} Highlight`,
+        thumbnail: `https://img.youtube.com/vi/${yId}/hqdefault.jpg`,
+        views: v.views || '1.1M views',
+        author: v.author || 'Nexus Creator',
+        duration: v.duration || '12:30',
+        category: v.category || 'Gaming',
+        sourceType: 'youtube',
+        youtubeId: yId,
+        videoUrl: `https://www.youtube.com/watch?v=${yId}`,
+        channelAvatar: v.channelAvatar || 'https://picsum.photos/80/80?random=99',
+        description: v.description,
+        kidFriendly: v.kidFriendly ?? juniorMode
+      };
+    }) : [];
+
+    res.json({ channels, videos });
+  } catch (error: any) {
+    console.warn('Error in /api/search-media:', error?.message || error);
+    // Graceful empty response so local directory takes over without crashing
+    res.json({ channels: [], videos: [] });
+  }
+});
+
 // --- Mount Vite / Static Files ---
 async function startServer() {
   if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'dist')));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    const distPath = path.join(__dirname, 'dist');
+    app.use(express.static(distPath));
+    app.use((_req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
     });
   } else {
     const { createServer: createViteServer } = await import('vite');

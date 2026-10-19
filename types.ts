@@ -23,6 +23,54 @@ export interface VideoPost {
   views: string;
   author: string;
   duration: string;
+  category?: string;
+  tags?: string[];
+  kidFriendly?: boolean;
+  videoUrl?: string;
+  likes?: number;
+  description?: string;
+  channelAvatar?: string;
+  uploadDate?: string;
+  sourceType?: 'youtube' | 'twitch' | 'direct';
+  youtubeId?: string;
+  twitchChannel?: string;
+  isLive?: boolean;
+}
+
+export interface ScoredVideo extends VideoPost {
+  score: number;
+  matchPercentage: number;
+  reasonBadge: string;
+  userWatchDuration: number;
+  isLikedByUser: boolean;
+}
+
+export interface CreatorChannel {
+  id: string;
+  name: string;
+  handle: string;
+  platform: 'youtube' | 'twitch' | 'both';
+  avatar: string;
+  banner: string;
+  subscribers: string;
+  verified: boolean;
+  bio: string;
+  category: string;
+  isLive?: boolean;
+  twitchChannel?: string;
+  youtubeChannelId?: string;
+  videos: VideoPost[];
+  kidFriendly?: boolean;
+}
+
+export interface UserTasteProfile {
+  watchDurations: Record<string, number>; // videoId -> seconds
+  completedVideos: Record<string, number>; // videoId -> count
+  likedVideoIds: string[];
+  searchHistory: string[];
+  categoryAffinities: Record<string, number>; // category -> points
+  tagAffinities: Record<string, number>; // tag -> points
+  lastUpdated: string;
 }
 
 export interface StatPoint {

@@ -3,13 +3,13 @@ import { User as UserIcon, Search, Check, X, MessageSquare, MoreVertical, UserPl
 import { User } from '../types';
 import { playCategorizedAudio } from '../services/audioManager';
 
-const INITIAL_REQUESTS = [
+export const INITIAL_REQUESTS = [
   { id: '101', username: 'NoobMaster69', avatar: 'https://picsum.photos/100/100?random=44', status: 'online', mutual: 3 },
   { id: '102', username: 'Jinx_Main', avatar: 'https://picsum.photos/100/100?random=45', status: 'offline', mutual: 12 },
   { id: '103', username: 'ViperLineup', avatar: 'https://picsum.photos/100/100?random=46', status: 'idle', mutual: 0 },
 ];
 
-const INITIAL_FRIENDS: (User & { activity?: string })[] = [
+export const INITIAL_FRIENDS: (User & { activity?: string })[] = [
   { id: '2', username: 'Nelly', avatar: 'https://picsum.photos/100/100?random=10', status: 'online', activity: 'Playing Valorant' },
   { id: '3', username: 'Mallow', avatar: 'https://picsum.photos/100/100?random=11', status: 'online', activity: 'Playing Minecraft' },
   { id: '4', username: 'Graggle', avatar: 'https://picsum.photos/100/100?random=12', status: 'online', activity: 'In Lobby' },
@@ -200,35 +200,35 @@ export const FriendsView: React.FC<FriendsViewProps> = ({ onOpenDM }) => {
       )}
 
       {/* --- HEADER --- */}
-      <div className="p-6 md:p-8 pb-0 z-10 flex flex-col gap-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="p-3 xs:p-4 sm:p-6 md:p-8 pb-0 z-10 flex flex-col gap-3 sm:gap-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-6">
             <div>
-                <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-                    <UserIcon className="text-purple-500" size={32} />
+                <h1 className="text-xl xs:text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2 sm:gap-3">
+                    <UserIcon className="text-purple-500 w-6 h-6 sm:w-8 sm:h-8" />
                     Social Hub
                 </h1>
-                <p className="text-slate-400 mt-1 font-medium">Manage your squad and incoming requests.</p>
+                <p className="text-slate-400 mt-0.5 sm:mt-1 font-medium text-xs sm:text-sm">Manage your squad and incoming requests.</p>
             </div>
 
             {/* Styled Search */}
             <div className="relative group w-full md:w-96">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                <div className="relative bg-[#18181b] rounded-2xl flex items-center px-4 border border-white/10 group-hover:border-white/20 transition-colors h-12">
-                    <Search className="text-slate-500 group-hover:text-white transition-colors" size={20} />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl sm:rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                <div className="relative bg-[#18181b] rounded-xl sm:rounded-2xl flex items-center px-3 sm:px-4 border border-white/10 group-hover:border-white/20 transition-colors h-10 sm:h-12">
+                    <Search className="text-slate-500 group-hover:text-white transition-colors shrink-0" size={17} />
                     <input 
                         type="text" 
                         placeholder="Find friends..." 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-transparent border-none focus:ring-0 text-white placeholder-slate-500 w-full h-full px-3 outline-none font-medium" 
+                        className="bg-transparent border-none focus:ring-0 text-white placeholder-slate-500 w-full h-full px-2 sm:px-3 outline-none font-medium text-xs sm:text-sm" 
                     />
-                    {searchQuery && <button onClick={() => setSearchQuery('')}><X size={16} className="text-slate-500 hover:text-white" /></button>}
+                    {searchQuery && <button onClick={() => setSearchQuery('')}><X size={15} className="text-slate-500 hover:text-white" /></button>}
                 </div>
             </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+        <div className="flex items-center gap-1.5 xs:gap-2 overflow-x-auto no-scrollbar pb-2">
             {[
                 { id: 'online', label: 'Online' },
                 { id: 'all', label: 'All Friends' },
@@ -240,39 +240,39 @@ export const FriendsView: React.FC<FriendsViewProps> = ({ onOpenDM }) => {
                     <button
                         key={tab.id}
                         onClick={() => { setActiveTab(tab.id as Tab); setSearchQuery(''); }}
-                        className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all relative overflow-hidden group
+                        className={`px-3 xs:px-4 sm:px-5 py-1.5 xs:py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all relative overflow-hidden group shrink-0
                             ${isActive ? 'text-white' : 'text-slate-400 hover:text-white hover:bg-white/5'}
                         `}
                     >
                         {isActive && <div className="absolute inset-0 bg-[#2b2d31] border border-white/10 rounded-xl -z-10"></div>}
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 xs:gap-2">
                             {tab.label}
                             {tab.count !== undefined && tab.count > 0 && (
-                                <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-md shadow-sm">{tab.count}</span>
+                                <span className="bg-red-500 text-white text-[9.5px] xs:text-[10px] px-1.5 py-0.5 rounded-md shadow-sm">{tab.count}</span>
                             )}
                         </div>
                     </button>
                 )
             })}
-            <div className="w-px h-6 bg-white/10 mx-2"></div>
+            <div className="w-px h-5 sm:h-6 bg-white/10 mx-1 xs:mx-2 shrink-0"></div>
             <button
                 onClick={() => { setActiveTab('add'); setSearchQuery(''); }}
-                className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all relative overflow-hidden group flex items-center gap-2
+                className={`px-3 xs:px-4 sm:px-5 py-1.5 xs:py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all relative overflow-hidden group flex items-center gap-1.5 xs:gap-2 shrink-0
                     ${activeTab === 'add' ? 'text-white' : 'text-green-400 hover:text-green-300 hover:bg-green-500/10'}
                 `}
             >
                 {activeTab === 'add' && <div className="absolute inset-0 bg-[#2b2d31] border border-green-500/30 rounded-xl -z-10"></div>}
-                <UserPlus size={16} /> Add Friend
+                <UserPlus size={14} className="sm:w-4 sm:h-4" /> Add Friend
             </button>
         </div>
       </div>
 
       {/* --- CONTENT AREA --- */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8 pt-4 z-10">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-3 xs:p-4 sm:p-6 md:p-8 pt-2 xs:pt-4 z-10">
         
         {/* PENDING TAB */}
         {activeTab === 'pending' && (
-            <div className="max-w-4xl mx-auto space-y-4 animate-fadeIn">
+            <div className="max-w-4xl mx-auto space-y-3 xs:space-y-4 animate-fadeIn">
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-2">Incoming Requests — {requests.length}</h3>
                 {requests.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-24 text-center opacity-50">
@@ -281,17 +281,17 @@ export const FriendsView: React.FC<FriendsViewProps> = ({ onOpenDM }) => {
                     </div>
                 ) : (
                     requests.map((req) => (
-                        <div key={req.id} id={`request-${req.id}`} className="bg-[#121216]/60 backdrop-blur-md border border-white/5 rounded-3xl p-4 flex items-center justify-between hover:bg-white/5 transition-all group">
-                             <div className="flex items-center gap-4">
-                                <img src={req.avatar} className="w-14 h-14 rounded-2xl object-cover" alt={req.username} />
-                                <div>
-                                    <h4 className="font-bold text-white text-lg">{req.username}</h4>
-                                    <p className="text-xs text-slate-400 font-medium">{req.mutual} mutual friends</p>
+                        <div key={req.id} id={`request-${req.id}`} className="bg-[#121216]/60 backdrop-blur-md border border-white/5 rounded-2xl xs:rounded-3xl p-3 xs:p-4 flex items-center justify-between hover:bg-white/5 transition-all group">
+                             <div className="flex items-center gap-2.5 xs:gap-4 min-w-0">
+                                <img src={req.avatar} className="w-11 h-11 xs:w-14 xs:h-14 rounded-xl xs:rounded-2xl object-cover shrink-0" alt={req.username} />
+                                <div className="min-w-0">
+                                    <h4 className="font-bold text-white text-sm xs:text-base sm:text-lg truncate">{req.username}</h4>
+                                    <p className="text-[11px] xs:text-xs text-slate-400 font-medium truncate">{req.mutual} mutual friends</p>
                                 </div>
                              </div>
-                             <div className="flex gap-3">
-                                 <button onClick={() => handleAction(req.id, 'accept')} className="w-10 h-10 rounded-xl bg-green-500/20 text-green-500 hover:bg-green-500 hover:text-white flex items-center justify-center transition-all"><Check size={20} /></button>
-                                 <button onClick={() => handleAction(req.id, 'decline')} className="w-10 h-10 rounded-xl bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all"><X size={20} /></button>
+                             <div className="flex gap-2 xs:gap-3 shrink-0">
+                                 <button onClick={() => handleAction(req.id, 'accept')} className="w-8 h-8 xs:w-10 xs:h-10 rounded-xl bg-green-500/20 text-green-500 hover:bg-green-500 hover:text-white flex items-center justify-center transition-all"><Check size={18} /></button>
+                                 <button onClick={() => handleAction(req.id, 'decline')} className="w-8 h-8 xs:w-10 xs:h-10 rounded-xl bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all"><X size={18} /></button>
                              </div>
                         </div>
                     ))
@@ -301,45 +301,49 @@ export const FriendsView: React.FC<FriendsViewProps> = ({ onOpenDM }) => {
 
         {/* FRIENDS LIST (ONLINE/ALL) */}
         {(activeTab === 'online' || activeTab === 'all') && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 animate-fadeIn">
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3 xs:gap-4 animate-fadeIn">
                 {filteredFriends.length > 0 ? (
                     filteredFriends.map(friend => (
-                        <div key={friend.id} className="relative bg-[#121216]/80 backdrop-blur-md border border-white/5 rounded-3xl p-4 flex items-center gap-4 hover:border-purple-500/30 hover:bg-[#18181b] transition-all group hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-900/10 cursor-default">
+                        <div 
+                            key={friend.id} 
+                            onClick={() => onOpenDM && onOpenDM(friend)}
+                            className="relative bg-[#121216]/80 backdrop-blur-md border border-white/5 rounded-2xl xs:rounded-3xl p-2.5 xs:p-3 sm:p-4 flex items-center gap-2.5 xs:gap-3 sm:gap-4 hover:border-purple-500/30 hover:bg-[#18181b] transition-all group hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-900/10 cursor-pointer"
+                        >
                              {/* Avatar */}
-                             <div className="relative">
-                                <img src={friend.avatar} alt={friend.username} className="w-14 h-14 rounded-2xl object-cover ring-2 ring-transparent group-hover:ring-purple-500 transition-all" />
-                                <div className={`absolute -bottom-1 -right-1 w-4 h-4 border-2 border-[#121216] rounded-full 
+                             <div className="relative shrink-0">
+                                <img src={friend.avatar} alt={friend.username} className="w-11 h-11 xs:w-12 xs:h-12 sm:w-14 sm:h-14 rounded-xl xs:rounded-2xl object-cover ring-2 ring-transparent group-hover:ring-purple-500 transition-all" />
+                                <div className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 border-2 border-[#121216] rounded-full 
                                     ${friend.status === 'online' ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : friend.status === 'idle' ? 'bg-amber-500' : friend.status === 'dnd' ? 'bg-red-500' : 'bg-slate-600'}`} 
                                 />
                              </div>
                              
                              {/* Info */}
                              <div className="flex-1 min-w-0">
-                                 <h4 className="font-bold text-white text-base truncate group-hover:text-purple-400 transition-colors">{friend.username}</h4>
-                                 <p className="text-xs text-slate-400 truncate mt-0.5 font-medium flex items-center gap-1.5">
+                                 <h4 className="font-bold text-white text-xs xs:text-sm sm:text-base truncate group-hover:text-purple-400 transition-colors">{friend.username}</h4>
+                                 <p className="text-[11px] xs:text-xs text-slate-400 truncate mt-0.5 font-medium flex items-center gap-1.5">
                                      {friend.activity ? (
-                                         <><Zap size={10} className="text-yellow-500" /> {friend.activity}</>
+                                         <><Zap size={10} className="text-yellow-500 shrink-0" /> <span className="truncate">{friend.activity}</span></>
                                      ) : (
                                          friend.status === 'online' ? 'Online' : 'Offline'
                                      )}
                                  </p>
                              </div>
 
-                             {/* Actions (Hover Reveal) */}
-                             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                             {/* Actions (Touch friendly: visible on mobile, reveal on desktop hover) */}
+                             <div className="flex items-center gap-1 xs:gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all shrink-0">
                                  <button 
                                      onClick={(e) => { e.stopPropagation(); onOpenDM && onOpenDM(friend); }}
-                                     className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 hover:text-white text-slate-400 flex items-center justify-center transition-colors"
+                                     className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-xl bg-white/5 hover:bg-white/10 hover:text-white text-slate-400 flex items-center justify-center transition-colors"
                                      title="Message"
                                  >
-                                     <MessageSquare size={18} />
+                                     <MessageSquare size={16} />
                                  </button>
                                  <div className="relative">
                                      <button 
                                          onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === friend.id ? null : friend.id); }}
-                                         className={`w-10 h-10 rounded-xl hover:bg-white/10 hover:text-white flex items-center justify-center transition-colors ${openMenuId === friend.id ? 'bg-white/10 text-white' : 'bg-white/5 text-slate-400'}`}
+                                         className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-xl hover:bg-white/10 hover:text-white flex items-center justify-center transition-colors ${openMenuId === friend.id ? 'bg-white/10 text-white' : 'bg-white/5 text-slate-400'}`}
                                      >
-                                         <MoreVertical size={18} />
+                                         <MoreVertical size={16} />
                                      </button>
 
                                      {/* Context Menu */}

@@ -46,6 +46,9 @@ export interface SocialClipPost {
   views: string;
   category: 'clip' | 'meta' | 'clutch' | 'meme';
   isNew?: boolean;
+  sourceType?: 'youtube' | 'twitch';
+  youtubeId?: string;
+  twitchChannel?: string;
 }
 
 const INITIAL_POSTS: SocialClipPost[] = [
@@ -527,6 +530,9 @@ export const SocialFeedSection: React.FC<SocialFeedSectionProps> = ({ onPlayClip
                       duration: post.duration,
                       game: post.game,
                       views: post.views,
+                      sourceType: post.sourceType || 'youtube',
+                      youtubeId: post.youtubeId || 'j6rF0_3s4tE',
+                      twitchChannel: post.twitchChannel,
                     });
                   }
                 }}

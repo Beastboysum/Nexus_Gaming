@@ -92,7 +92,7 @@ export const HeaderStreakPill: React.FC<HeaderStreakPillProps> = ({ streakCount,
     <button 
       onClick={onClick}
       title={`Current Daily Login Streak: ${streakCount} days (Click to view Rewards & Milestones)`}
-      className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all duration-300 active:scale-95 group overflow-visible ${
+      className={`relative flex items-center gap-1 sm:gap-1.5 px-2 xs:px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border transition-all duration-300 active:scale-95 group overflow-visible ${
         isBursting 
           ? 'bg-gradient-to-r from-orange-500/30 via-amber-500/25 to-red-500/20 border-orange-400 text-amber-300 shadow-[0_0_20px_rgba(249,115,22,0.6)] ring-2 ring-orange-500/40 scale-105' 
           : 'bg-gradient-to-r from-orange-500/15 via-amber-500/10 to-transparent border-orange-500/30 hover:border-orange-500/50 text-orange-400 hover:text-orange-300 shadow-sm shadow-orange-500/10'
