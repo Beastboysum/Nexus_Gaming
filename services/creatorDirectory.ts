@@ -52,7 +52,7 @@ export const CREATOR_DIRECTORY: CreatorChannel[] = [
       {
         id: 'tenz-stream-live',
         title: 'TenZ Live Ranked Grind - Solo Queue to Rank 1 Radiant',
-        thumbnail: 'https://images.unsplash.com/photo-1624138784180-48145465d61f?q=80&w=800&auto=format&fit=crop',
+        thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_tenz-1280x720.jpg',
         views: '42.5K watching',
         author: 'TenZ',
         duration: 'LIVE',
@@ -87,7 +87,7 @@ export const CREATOR_DIRECTORY: CreatorChannel[] = [
       {
         id: 'tarik-stream-1',
         title: 'VCT AMERICAS WATCH PARTY & HIGH ELO WITH PROS',
-        thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop',
+        thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_tarik-1280x720.jpg',
         views: '85.3K watching',
         author: 'Tarik',
         duration: 'LIVE',
@@ -331,7 +331,7 @@ export const CREATOR_DIRECTORY: CreatorChannel[] = [
       {
         id: 'minecraft-stream-1',
         title: 'Minecraft Championship Creator Live Stream Showcase',
-        thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop',
+        thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_minecraft-1280x720.jpg',
         views: '68.1K watching',
         author: 'Minecraft Live',
         duration: 'LIVE',
@@ -365,7 +365,7 @@ export const CREATOR_DIRECTORY: CreatorChannel[] = [
       {
         id: 'riot-stream-1',
         title: 'Riot Games World Championship Live Broadcast Stream',
-        thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop',
+        thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_riotgames-1280x720.jpg',
         views: '245K watching',
         author: 'Riot Games Official',
         duration: 'LIVE',
@@ -448,7 +448,7 @@ export const CREATOR_DIRECTORY: CreatorChannel[] = [
       {
         id: 'kai-stream-1',
         title: 'KAI CENAT LIVE - VARIETY GAMING & SPECIAL GUESTS',
-        thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop',
+        thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_kaicenat-1280x720.jpg',
         views: '110K watching',
         author: 'Kai Cenat',
         duration: 'LIVE',
@@ -499,7 +499,7 @@ export const CREATOR_DIRECTORY: CreatorChannel[] = [
       {
         id: 'ninja-stream-1',
         title: 'NINJA LIVE - FORTNITE SQUAD VICTORY ROYALES',
-        thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop',
+        thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_ninja-1280x720.jpg',
         views: '35K watching',
         author: 'Ninja',
         duration: 'LIVE',

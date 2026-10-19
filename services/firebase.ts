@@ -193,6 +193,11 @@ export const AuthService = {
         } catch (_) {}
       }
 
+      // Sync to Cloud SQL in background
+      if (auth.currentUser) {
+        this.syncUserToCloudSql(auth.currentUser, profile.username, profile.avatar).catch(() => {});
+      }
+
       return userDoc;
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `users/${uid}`);
@@ -200,10 +205,32 @@ export const AuthService = {
     }
   },
 
+  // Sync authenticated user to Cloud SQL
+  async syncUserToCloudSql(user: FirebaseUser, username?: string, avatar?: string): Promise<void> {
+    try {
+      const token = await user.getIdToken();
+      await fetch('/api/user/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: username || user.displayName || 'Gamer',
+          avatar: avatar || user.photoURL || undefined,
+        }),
+      });
+    } catch (err) {
+      // Non-blocking sync error
+      console.warn('Could not sync user to Cloud SQL:', err);
+    }
+  },
+
   // Sign in with Google Popup
   async loginWithGoogle(): Promise<{ user: FirebaseUser; isNewUser: boolean; existingProfile: User | null }> {
     const result = await signInWithPopup(auth, googleProvider);
     const existingProfile = await this.getUserProfile(result.user.uid);
+    this.syncUserToCloudSql(result.user, existingProfile?.username, existingProfile?.avatar).catch(() => {});
     return {
       user: result.user,
       isNewUser: !existingProfile,

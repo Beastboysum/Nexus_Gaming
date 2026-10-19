@@ -6,6 +6,7 @@ import {
   getTopTasteCategories, 
   resetRecommendationHistory,
   createProjectedVideo,
+  resolveStreamMetadata,
   getVideoThumbnail
 } from '../services/recommendationEngine';
 import { isJuniorModeEnabled } from '../services/juniorModeContext';
@@ -307,10 +308,16 @@ export const PersonalizedVideoShelf: React.FC<PersonalizedVideoShelfProps> = ({
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!projectUrlInput.trim()) return;
-                const newVid = createProjectedVideo(projectUrlInput, undefined, isJunior);
+                const streamUrl = projectUrlInput.trim();
+                const newVid = createProjectedVideo(streamUrl, undefined, isJunior);
                 setSelectedVideo(newVid);
                 setShowProjectModal(false);
                 setProjectUrlInput('');
+
+                // Resolve authentic channel name & title
+                resolveStreamMetadata(streamUrl, isJunior).then(resolved => {
+                  setSelectedVideo(prev => (prev && prev.id === newVid.id ? resolved : prev));
+                }).catch(() => {});
               }}
               className="space-y-3"
             >

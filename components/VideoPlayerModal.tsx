@@ -11,6 +11,7 @@ import {
   getPersonalizedRecommendations,
   parseMediaStreamUrl,
   createProjectedVideo,
+  resolveStreamMetadata,
   getVideoThumbnail
 } from '../services/recommendationEngine';
 import { playCategorizedAudio, SoundEffectEngine } from '../services/audioManager';
@@ -75,6 +76,26 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 
     // Initial audio cue
     playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-click-901.mp3', 'system', 0.4);
+
+    // If active video has placeholder author or title, resolve authentic creator & title in background
+    if (activeVideo.author === 'YouTube Creator' || activeVideo.author === 'Custom Stream' || activeVideo.title.startsWith('YouTube Video [')) {
+      const streamInput = activeVideo.youtubeId || activeVideo.videoUrl || (activeVideo.twitchChannel ? `twitch.tv/${activeVideo.twitchChannel}` : '');
+      if (streamInput) {
+        resolveStreamMetadata(streamInput, isJunior).then(resolved => {
+          setActiveVideo(prev => {
+            if (!prev || prev.id !== activeVideo.id) return prev;
+            return {
+              ...prev,
+              title: resolved.title,
+              author: resolved.author,
+              thumbnail: resolved.thumbnail,
+              category: resolved.category,
+              views: resolved.views,
+            };
+          });
+        }).catch(() => {});
+      }
+    }
 
     return () => {
       if (watchTrackerRef.current) {
@@ -198,17 +219,37 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     }
   };
 
-  const handleProjectCustomStream = (e: React.FormEvent) => {
+  const handleProjectCustomStream = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customStreamUrl.trim()) return;
 
-    const projected = createProjectedVideo(customStreamUrl, undefined, isJunior);
+    const streamInput = customStreamUrl.trim();
+    const projected = createProjectedVideo(streamInput, undefined, isJunior);
     setActiveVideo(projected);
     setShowProjectorInput(false);
     setCustomStreamUrl('');
     playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-click-901.mp3', 'system', 0.5);
-    setAlgoToast('Stream projected directly into player! 🚀');
-    setTimeout(() => setAlgoToast(null), 3000);
+    setAlgoToast('Stream projected! Resolving authentic title & channel... 🚀');
+
+    // Asynchronously resolve authentic channel name, exact title, and official thumbnail
+    try {
+      const resolved = await resolveStreamMetadata(streamInput, isJunior);
+      setActiveVideo(prev => {
+        if (!prev || prev.id !== projected.id) return prev;
+        return {
+          ...prev,
+          title: resolved.title,
+          author: resolved.author,
+          thumbnail: resolved.thumbnail,
+          category: resolved.category,
+          views: resolved.views,
+        };
+      });
+      setAlgoToast(`✨ ${resolved.author} • ${resolved.title.slice(0, 32)}...`);
+      setTimeout(() => setAlgoToast(null), 3000);
+    } catch {
+      setTimeout(() => setAlgoToast(null), 2500);
+    }
   };
 
   // Determine current host for Twitch parent embed security

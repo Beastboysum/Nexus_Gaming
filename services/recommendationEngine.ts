@@ -6,13 +6,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-minecraft-1',
     title: 'Surviving 100 Days in a Mega Minecraft Treehouse!',
-    author: 'BlockMaster Tim',
+    author: 'Forge Labs',
     views: '4.8M',
     duration: '18:45',
     category: 'Minecraft',
     tags: ['Minecraft', 'Building', 'Survival', 'Kids', 'Creative', 'Adventure'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1607677914754-58a36d240214?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/W_7LqXj2C70/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=101',
     description: 'We built the biggest treehouse kingdom ever seen in Minecraft hardcore! Complete with zip lines, automatic farms, and secret rooms.',
     likes: 245000,
@@ -29,7 +29,7 @@ export const VIDEO_CATALOG: VideoPost[] = [
     category: 'Roblox',
     tags: ['Roblox', 'Obby', 'Funny', 'Multiplayer', 'Kids', 'Challenge'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/kJQP7kiw5Fk/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=102',
     description: 'Can we beat 100 levels of crazy rainbow obstacles before the lava catches us? Watch till the end for the secret rainbow jetpack!',
     likes: 180000,
@@ -40,13 +40,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-mario-1',
     title: 'Super Mario Wonder - Finding ALL Hidden Wonder Seeds!',
-    author: 'NintendoNerd Joy',
+    author: 'Nintendo',
     views: '1.9M',
     duration: '15:10',
     category: 'Nintendo',
     tags: ['Mario', 'Nintendo', 'Secrets', 'Kids', 'Fun', 'Platformer'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/J3_A0-4H-pA/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=103',
     description: 'Every secret wonder seed location unlocked with Elephant Mario and Yoshi! Super fun guide for all ages.',
     likes: 112000,
@@ -57,13 +57,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-pokemon-1',
     title: 'I Caught Every Rare Legendary Pokémon in 24 Hours!',
-    author: 'PokeChampion Red',
+    author: 'The Official Pokémon YouTube Channel',
     views: '2.4M',
     duration: '21:05',
     category: 'Pokemon',
     tags: ['Pokemon', 'Nintendo', 'Adventure', 'Kids', 'Collecting', 'Challenge'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1613770611726-5b5cfa99000b?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/3dsh1p4rP7Y/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=104',
     description: 'From Mewtwo to Rayquaza, here is the ultimate shiny hunting guide! Guaranteed easy tricks.',
     likes: 165000,
@@ -74,13 +74,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-rocketleague-1',
     title: 'Top 50 Most Satisfying Rocket League Aerial Goals!',
-    author: 'TurboBoost TV',
+    author: 'Rocket League',
     views: '1.5M',
     duration: '09:50',
     category: 'Sports & Fun',
     tags: ['Rocket League', 'Goals', 'Cars', 'Kids', 'Multiplayer', 'Highlights'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/lq7eB84fX_M/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=105',
     description: 'Incredible flips, ceiling resets, and buzzer beaters set to high-energy upbeat music.',
     likes: 98000,
@@ -91,13 +91,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-fallguys-1',
     title: 'Ultimate Fall Guys Crown Win Streak (No Disqualifications!)',
-    author: 'BeanKing Leo',
+    author: 'Fall Guys',
     views: '1.1M',
     duration: '11:15',
     category: 'Party Games',
     tags: ['Fall Guys', 'Funny Moments', 'Kids', 'Multiplayer', 'Obstacles'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/kK_Wk4zR5l0/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=106',
     description: '10 straight wins across slime climb, hex-a-gone, and door dash with the funniest costume combos!',
     likes: 74000,
@@ -108,13 +108,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-lego-1',
     title: 'Building a Working Rollercoaster from 5,000 LEGO Bricks',
-    author: 'BrickMaster Studio',
+    author: 'LEGO',
     views: '3.7M',
     duration: '16:30',
     category: 'Creative Builds',
     tags: ['LEGO', 'Creative', 'Building', 'Kids', 'Science', 'Fun'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1585366119957-e9730b6d0f60?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/vLnPwxZdW4Y/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=107',
     description: 'We engineered motorized lifts, double loops, and light effects. You can build this at home too!',
     likes: 310000,
@@ -125,13 +125,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-minecraft-speedrun',
     title: 'Minecraft World Record Speedrun Explained Step by Step',
-    author: 'SpeedrunCentral',
+    author: 'Minecraft',
     views: '2.8M',
     duration: '14:22',
     category: 'Minecraft',
     tags: ['Minecraft', 'Speedrun', 'Guide', 'World Record', 'Tips'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1579202673506-ca3ce28943ef?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/rV3bZl68y1s/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=108',
     description: 'How top runners find fortresses in seconds, perform blind portals, and one-cycle the Ender Dragon.',
     likes: 215000,
@@ -142,14 +142,14 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-twitch-minecraft',
     title: 'Minecraft Championship Creator Live Stream Showcase',
-    author: 'Minecraft Live',
+    author: 'Minecraft',
     views: '1.2M',
     duration: 'LIVE',
     category: 'Minecraft',
     tags: ['Minecraft', 'Live Stream', 'Twitch', 'Kids', 'Tournament'],
     kidFriendly: true,
     isLive: true,
-    thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_minecraft-1280x720.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=120',
     description: 'Official live broadcast showcasing world-class builder creations, mini-games, and survival challenges.',
     likes: 195000,
@@ -166,7 +166,7 @@ export const VIDEO_CATALOG: VideoPost[] = [
     category: 'Esports',
     tags: ['Valorant', 'Esports', 'Aim', 'Competitive', 'Pro Guide'],
     kidFriendly: false,
-    thumbnail: 'https://images.unsplash.com/photo-1624138784180-48145465d61f?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/j6rF0_3s4tE/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=109',
     description: 'Daily aim routine, mouse sensitivity calibration, and micro-adjustments for radiant lobby dominations.',
     likes: 340000,
@@ -177,14 +177,14 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-twitch-riot',
     title: 'Riot Games World Championship Live Broadcast Stream',
-    author: 'Riot Games Official',
+    author: 'Riot Games',
     views: '890K',
     duration: 'LIVE',
     category: 'Esports',
     tags: ['Esports', 'Twitch', 'Live Stream', 'Tournament', 'Pro'],
     kidFriendly: false,
     isLive: true,
-    thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_riotgames-1280x720.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=121',
     description: 'Direct Twitch stream of world-class pro tournament matches with live commentary, instant replays, and crowd audio.',
     likes: 410000,
@@ -202,7 +202,7 @@ export const VIDEO_CATALOG: VideoPost[] = [
     tags: ['Valorant', 'Live Stream', 'Twitch', 'Watch Party', 'FPS'],
     kidFriendly: false,
     isLive: true,
-    thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_tarik-1280x720.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=122',
     description: 'Non-stop competitive gameplay, high-energy reactions, and match breakdowns live on Twitch.',
     likes: 290000,
@@ -211,15 +211,32 @@ export const VIDEO_CATALOG: VideoPost[] = [
     videoUrl: 'https://twitch.tv/tarik'
   },
   {
+    id: 'vid-mrbeast-squid',
+    title: '$456,000 Squid Game In Real Life!',
+    author: 'MrBeast',
+    views: '650M',
+    duration: '25:41',
+    category: 'Entertainment',
+    tags: ['MrBeast', 'Challenge', 'Gaming', 'Squid Game'],
+    kidFriendly: true,
+    thumbnail: 'https://img.youtube.com/vi/0e3GPea1Tyg/hqdefault.jpg',
+    channelAvatar: 'https://picsum.photos/80/80?random=125',
+    description: '456 people compete for $456,000 in the most viral real life challenge game ever made.',
+    likes: 18000000,
+    sourceType: 'youtube',
+    youtubeId: '0e3GPea1Tyg',
+    videoUrl: 'https://www.youtube.com/watch?v=0e3GPea1Tyg'
+  },
+  {
     id: 'vid-eldenring-dlc',
     title: 'Shadow of the Erdtree - All 10 Secret Boss Locations & Lore',
-    author: 'VaatiVid',
+    author: 'VaatiVidya',
     views: '3.1M',
     duration: '35:40',
     category: 'RPG & Action',
     tags: ['Elden Ring', 'Boss Fight', 'Secrets', 'Action', 'Lore'],
     kidFriendly: false,
-    thumbnail: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/h8qT1-t-PBs/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=110',
     description: 'Detailed walkthrough of the hardest hidden encounters and fragments in the Realm of Shadow.',
     likes: 290000,
@@ -230,13 +247,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-hardware-build',
     title: 'Building the Ultimate $2000 Dream Gaming Setup in 2026',
-    author: 'SetupWars',
+    author: 'Linus Tech Tips',
     views: '1.8M',
     duration: '19:40',
     category: 'Hardware',
     tags: ['PC Build', 'Setup', 'Tech', 'Desk Setup', 'RGB'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/BL4DCEp7blY/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=111',
     description: 'Cable management tricks, ultra-wide OLED monitor, and silent liquid cooling assembly.',
     likes: 145000,
@@ -247,13 +264,13 @@ export const VIDEO_CATALOG: VideoPost[] = [
   {
     id: 'vid-funny-fails',
     title: 'Funniest Gaming Fails & Instant Karma Moments of the Month',
-    author: 'ClutchKarma',
+    author: 'BBC News / Gaming',
     views: '5.6M',
     duration: '13:55',
     category: 'Funny Clips',
     tags: ['Funny Moments', 'Fails', 'Gaming', 'Highlights', 'Kids'],
     kidFriendly: true,
-    thumbnail: 'https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=800&auto=format&fit=crop',
+    thumbnail: 'https://img.youtube.com/vi/9y4f_Q28Z_w/hqdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=112',
     description: 'Hilarious glitches, unexpected physics moments, and team betrayal clips that will make you laugh out loud.',
     likes: 420000,
@@ -587,8 +604,32 @@ export function parseMediaStreamUrl(input: string): {
   return { sourceType: 'direct', idOrChannel: trimmed };
 }
 
+// Memory & LocalStorage metadata cache for projected streams
+const METADATA_CACHE = new Map<string, { title: string; author: string; thumbnail: string; category?: string }>();
+
+// Seed cache with known videos
+VIDEO_CATALOG.forEach(v => {
+  if (v.youtubeId) {
+    METADATA_CACHE.set(v.youtubeId, {
+      title: v.title,
+      author: v.author,
+      thumbnail: `https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`,
+      category: v.category,
+    });
+  }
+  if (v.twitchChannel) {
+    METADATA_CACHE.set(`twitch:${v.twitchChannel.toLowerCase()}`, {
+      title: v.title,
+      author: v.author,
+      thumbnail: `https://static-cdn.jtvnw.net/previews-ttv/live_user_${v.twitchChannel.toLowerCase()}-1280x720.jpg`,
+      category: v.category,
+    });
+  }
+});
+
 /**
  * Creates a playable ScoredVideo from an arbitrary YouTube or Twitch stream URL.
+ * Immediately applies authentic cached metadata if available, and sets official platform thumbnail.
  */
 export function createProjectedVideo(
   streamInput: string,
@@ -601,25 +642,36 @@ export function createProjectedVideo(
   const isTwitch = sourceType === 'twitch';
   const isYouTube = sourceType === 'youtube';
 
-  const title = customTitle || (isTwitch 
-    ? `Live Twitch Stream • ${idOrChannel}` 
-    : isYouTube 
-      ? `Projected YouTube Video [${idOrChannel}]` 
-      : 'Custom Stream Video');
+  const cacheKey = isTwitch ? `twitch:${idOrChannel.toLowerCase()}` : idOrChannel;
+  const cached = METADATA_CACHE.get(cacheKey);
 
-  const thumbnail = isYouTube 
+  const title = customTitle || (cached 
+    ? cached.title 
+    : isTwitch 
+      ? `Live Stream • ${idOrChannel.charAt(0).toUpperCase() + idOrChannel.slice(1)}` 
+      : isYouTube 
+        ? `YouTube Video [${idOrChannel}]` 
+        : 'Custom Stream Video');
+
+  const thumbnail = cached?.thumbnail || (isYouTube 
     ? `https://img.youtube.com/vi/${idOrChannel}/hqdefault.jpg`
     : isTwitch
-      ? `https://static-cdn.jtvnw.net/previews-ttv/live_user_${idOrChannel.toLowerCase()}-640x360.jpg`
-      : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop';
+      ? `https://static-cdn.jtvnw.net/previews-ttv/live_user_${idOrChannel.toLowerCase()}-1280x720.jpg`
+      : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop');
+
+  const author = cached?.author || (isTwitch 
+    ? idOrChannel.charAt(0).toUpperCase() + idOrChannel.slice(1) 
+    : isYouTube 
+      ? 'YouTube Creator' 
+      : 'Custom Stream');
 
   return {
     id: videoId,
     title,
-    author: isTwitch ? idOrChannel : isYouTube ? 'YouTube Creator' : 'Custom Stream',
+    author,
     views: '1.5M',
     duration: isTwitch ? 'LIVE' : 'Projected',
-    category: isJuniorFriendly ? 'Minecraft' : 'Gaming',
+    category: cached?.category || (isJuniorFriendly ? 'Minecraft' : 'Gaming'),
     tags: isJuniorFriendly ? ['Kids', 'Gaming', 'Stream'] : ['Gaming', 'Live', 'Stream'],
     kidFriendly: isJuniorFriendly,
     thumbnail,
@@ -638,6 +690,66 @@ export function createProjectedVideo(
 }
 
 /**
+ * Asynchronously resolves authentic title, creator channel name, and official thumbnail
+ * from the Nexus media resolver endpoint for any YouTube video or Twitch channel.
+ */
+export async function resolveStreamMetadata(
+  streamInput: string,
+  isJuniorFriendly: boolean = false
+): Promise<ScoredVideo> {
+  const base = createProjectedVideo(streamInput, undefined, isJuniorFriendly);
+  try {
+    const res = await fetch('/api/resolve-media', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input: streamInput })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const updated = {
+        ...base,
+        title: data.title || base.title,
+        author: data.author || base.author,
+        thumbnail: data.thumbnail || base.thumbnail,
+        category: data.category || base.category,
+        views: data.views || base.views,
+        youtubeId: data.youtubeId || base.youtubeId,
+        twitchChannel: data.twitchChannel || base.twitchChannel,
+        sourceType: data.sourceType || base.sourceType,
+      };
+
+      // Store in metadata cache
+      const { idOrChannel, sourceType } = parseMediaStreamUrl(streamInput);
+      const cacheKey = sourceType === 'twitch' ? `twitch:${idOrChannel.toLowerCase()}` : idOrChannel;
+      METADATA_CACHE.set(cacheKey, {
+        title: updated.title,
+        author: updated.author,
+        thumbnail: updated.thumbnail,
+        category: updated.category,
+      });
+
+      // Persist projected stream to Cloud SQL
+      fetch('/api/projections/record', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          streamUrl: streamInput,
+          title: updated.title,
+          channelName: updated.author,
+          thumbnailUrl: updated.thumbnail,
+          platform: updated.sourceType,
+        }),
+      }).catch(() => {});
+
+      return updated;
+    }
+  } catch (err) {
+    console.warn('Metadata resolution failed, using best-effort stream:', err);
+  }
+  return base;
+}
+
+/**
  * Returns the authentic thumbnail for any video.
  * For YouTube, guarantees the official HQ thumbnail: https://img.youtube.com/vi/{id}/hqdefault.jpg
  * For Twitch, guarantees the official live preview image.
@@ -647,7 +759,10 @@ export function getVideoThumbnail(video: { thumbnail?: string; youtubeId?: strin
     return `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
   }
   if (video.sourceType === 'twitch' && video.twitchChannel) {
-    return `https://static-cdn.jtvnw.net/previews-ttv/live_user_${video.twitchChannel.toLowerCase()}-640x360.jpg`;
+    return `https://static-cdn.jtvnw.net/previews-ttv/live_user_${video.twitchChannel.toLowerCase()}-1280x720.jpg`;
   }
-  return video.thumbnail || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop';
+  if (video.thumbnail && video.thumbnail.startsWith('http')) {
+    return video.thumbnail;
+  }
+  return 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop';
 }
