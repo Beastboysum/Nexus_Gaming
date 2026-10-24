@@ -4,140 +4,140 @@ const STORAGE_KEY = 'nexus_user_taste_profile_v2';
 
 export const VIDEO_CATALOG: VideoPost[] = [
   {
-    id: 'vid-minecraft-1',
-    title: 'Surviving 100 Days in a Mega Minecraft Treehouse!',
-    author: 'Forge Labs',
-    views: '4.8M',
-    duration: '18:45',
+    id: 'vid-minecraft-treehouse',
+    title: 'I Built THE ULTIMATE TREE HOUSE in Minecraft Hardcore (#96)',
+    author: 'Farzy',
+    views: '4.4M',
+    duration: '19:28',
     category: 'Minecraft',
     tags: ['Minecraft', 'Building', 'Survival', 'Kids', 'Creative', 'Adventure'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/W_7LqXj2C70/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/YiiHhT7NdGk/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=101',
     description: 'We built the biggest treehouse kingdom ever seen in Minecraft hardcore! Complete with zip lines, automatic farms, and secret rooms.',
     likes: 245000,
     sourceType: 'youtube',
-    youtubeId: 'W_7LqXj2C70',
-    videoUrl: 'https://www.youtube.com/watch?v=W_7LqXj2C70'
+    youtubeId: 'YiiHhT7NdGk',
+    videoUrl: 'https://www.youtube.com/watch?v=YiiHhT7NdGk'
   },
   {
     id: 'vid-roblox-1',
-    title: 'Escape the Giant Rainbow Lava Obby with Friends!',
-    author: 'RainbowGamer Squad',
-    views: '3.2M',
-    duration: '12:20',
+    title: "LAVA BARRY'S PRISON RUN Escape In Roblox (New Scary Obby)",
+    author: 'Lovely Boss',
+    views: '1.6M',
+    duration: '15:03',
     category: 'Roblox',
     tags: ['Roblox', 'Obby', 'Funny', 'Multiplayer', 'Kids', 'Challenge'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/kJQP7kiw5Fk/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/R3Eos53EsfE/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=102',
     description: 'Can we beat 100 levels of crazy rainbow obstacles before the lava catches us? Watch till the end for the secret rainbow jetpack!',
     likes: 180000,
     sourceType: 'youtube',
-    youtubeId: 'kJQP7kiw5Fk',
-    videoUrl: 'https://www.youtube.com/watch?v=kJQP7kiw5Fk'
+    youtubeId: 'R3Eos53EsfE',
+    videoUrl: 'https://www.youtube.com/watch?v=R3Eos53EsfE'
   },
   {
     id: 'vid-mario-1',
-    title: 'Super Mario Wonder - Finding ALL Hidden Wonder Seeds!',
-    author: 'Nintendo',
-    views: '1.9M',
-    duration: '15:10',
+    title: 'Super Mario Bros Wonder - All Wonder Flowers',
+    author: 'packattack04082',
+    views: '1.4M',
+    duration: '1:17:39',
     category: 'Nintendo',
     tags: ['Mario', 'Nintendo', 'Secrets', 'Kids', 'Fun', 'Platformer'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/J3_A0-4H-pA/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/9lvnlGiJGUQ/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=103',
     description: 'Every secret wonder seed location unlocked with Elephant Mario and Yoshi! Super fun guide for all ages.',
     likes: 112000,
     sourceType: 'youtube',
-    youtubeId: 'J3_A0-4H-pA',
-    videoUrl: 'https://www.youtube.com/watch?v=J3_A0-4H-pA'
+    youtubeId: '9lvnlGiJGUQ',
+    videoUrl: 'https://www.youtube.com/watch?v=9lvnlGiJGUQ'
   },
   {
     id: 'vid-pokemon-1',
-    title: 'I Caught Every Rare Legendary Pokémon in 24 Hours!',
-    author: 'The Official Pokémon YouTube Channel',
+    title: 'VGC Day 1 | 2027 Pokémon Regional Championships',
+    author: 'The Official Pokémon YouTube channel',
     views: '2.4M',
-    duration: '21:05',
+    duration: '9:04:47',
     category: 'Pokemon',
     tags: ['Pokemon', 'Nintendo', 'Adventure', 'Kids', 'Collecting', 'Challenge'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/3dsh1p4rP7Y/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/87ruoF7dg-E/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=104',
-    description: 'From Mewtwo to Rayquaza, here is the ultimate shiny hunting guide! Guaranteed easy tricks.',
+    description: 'The highest-level Pokémon tournament matches with live professional commentary and championship tactics.',
     likes: 165000,
     sourceType: 'youtube',
-    youtubeId: '3dsh1p4rP7Y',
-    videoUrl: 'https://www.youtube.com/watch?v=3dsh1p4rP7Y'
+    youtubeId: '87ruoF7dg-E',
+    videoUrl: 'https://www.youtube.com/watch?v=87ruoF7dg-E'
   },
   {
     id: 'vid-rocketleague-1',
-    title: 'Top 50 Most Satisfying Rocket League Aerial Goals!',
-    author: 'Rocket League',
+    title: 'ROCKET LEAGUE BEST OF INSANITY (BEST GOALS, FREESTYLES)',
+    author: 'ROCKET LEAGUE FX',
     views: '1.5M',
-    duration: '09:50',
+    duration: '14:31',
     category: 'Sports & Fun',
     tags: ['Rocket League', 'Goals', 'Cars', 'Kids', 'Multiplayer', 'Highlights'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/lq7eB84fX_M/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/9eOUDbbePII/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=105',
     description: 'Incredible flips, ceiling resets, and buzzer beaters set to high-energy upbeat music.',
     likes: 98000,
     sourceType: 'youtube',
-    youtubeId: 'lq7eB84fX_M',
-    videoUrl: 'https://www.youtube.com/watch?v=lq7eB84fX_M'
+    youtubeId: '9eOUDbbePII',
+    videoUrl: 'https://www.youtube.com/watch?v=9eOUDbbePII'
   },
   {
     id: 'vid-fallguys-1',
-    title: 'Ultimate Fall Guys Crown Win Streak (No Disqualifications!)',
-    author: 'Fall Guys',
-    views: '1.1M',
-    duration: '11:15',
+    title: 'WINNING EVERY GAME of Fall Guys! Winstreak WORLD RECORD!?',
+    author: 'SypherPK',
+    views: '1.7M',
+    duration: '15:23',
     category: 'Party Games',
     tags: ['Fall Guys', 'Funny Moments', 'Kids', 'Multiplayer', 'Obstacles'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/kK_Wk4zR5l0/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/chwlp3grb28/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=106',
-    description: '10 straight wins across slime climb, hex-a-gone, and door dash with the funniest costume combos!',
+    description: 'World record win streak across slime climb, hex-a-gone, and door dash with the funniest gameplay!',
     likes: 74000,
     sourceType: 'youtube',
-    youtubeId: 'kK_Wk4zR5l0',
-    videoUrl: 'https://www.youtube.com/watch?v=kK_Wk4zR5l0'
+    youtubeId: 'chwlp3grb28',
+    videoUrl: 'https://www.youtube.com/watch?v=chwlp3grb28'
   },
   {
-    id: 'vid-lego-1',
-    title: 'Building a Working Rollercoaster from 5,000 LEGO Bricks',
-    author: 'LEGO',
-    views: '3.7M',
-    duration: '16:30',
+    id: 'vid-minecraft-trailer',
+    title: 'Official Minecraft Trailer & Building Showcase',
+    author: 'Minecraft',
+    views: '160M',
+    duration: '02:00',
     category: 'Creative Builds',
-    tags: ['LEGO', 'Creative', 'Building', 'Kids', 'Science', 'Fun'],
+    tags: ['Minecraft', 'Creative', 'Building', 'Kids', 'Official', 'Fun'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/vLnPwxZdW4Y/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/MmB9b5njVbA/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=107',
-    description: 'We engineered motorized lifts, double loops, and light effects. You can build this at home too!',
-    likes: 310000,
+    description: 'Explore infinite worlds and build everything from the simplest of homes to the grandest of castles.',
+    likes: 3100000,
     sourceType: 'youtube',
-    youtubeId: 'vLnPwxZdW4Y',
-    videoUrl: 'https://www.youtube.com/watch?v=vLnPwxZdW4Y'
+    youtubeId: 'MmB9b5njVbA',
+    videoUrl: 'https://www.youtube.com/watch?v=MmB9b5njVbA'
   },
   {
     id: 'vid-minecraft-speedrun',
-    title: 'Minecraft World Record Speedrun Explained Step by Step',
-    author: 'Minecraft',
+    title: 'I Survived 1000 Days in Minecraft Hardcore [MOVIE]',
+    author: 'halvetone',
     views: '2.8M',
-    duration: '14:22',
+    duration: '2:44:24',
     category: 'Minecraft',
-    tags: ['Minecraft', 'Speedrun', 'Guide', 'World Record', 'Tips'],
+    tags: ['Minecraft', 'Hardcore', 'Survival', '1000 Days', 'Adventure'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/rV3bZl68y1s/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/3n72DQR6WKk/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=108',
-    description: 'How top runners find fortresses in seconds, perform blind portals, and one-cycle the Ender Dragon.',
+    description: 'The complete cinematic saga of 1,000 consecutive days survived in Minecraft hardcore difficulty.',
     likes: 215000,
     sourceType: 'youtube',
-    youtubeId: 'rV3bZl68y1s',
-    videoUrl: 'https://www.youtube.com/watch?v=rV3bZl68y1s'
+    youtubeId: '3n72DQR6WKk',
+    videoUrl: 'https://www.youtube.com/watch?v=3n72DQR6WKk'
   },
   {
     id: 'vid-twitch-minecraft',
@@ -159,20 +159,20 @@ export const VIDEO_CATALOG: VideoPost[] = [
   },
   {
     id: 'vid-valorant-pro',
-    title: 'TenZ Ultimate Aim & Crosshair Placement Masterclass',
+    title: 'The VALORANT Ultimate Guide for Beginners !! | SEN TenZ',
     author: 'TenZ',
     views: '4.2M',
-    duration: '22:15',
+    duration: '23:04',
     category: 'Esports',
     tags: ['Valorant', 'Esports', 'Aim', 'Competitive', 'Pro Guide'],
     kidFriendly: false,
-    thumbnail: 'https://img.youtube.com/vi/j6rF0_3s4tE/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/3xjpx8-2gD0/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=109',
     description: 'Daily aim routine, mouse sensitivity calibration, and micro-adjustments for radiant lobby dominations.',
     likes: 340000,
     sourceType: 'youtube',
-    youtubeId: 'j6rF0_3s4tE',
-    videoUrl: 'https://www.youtube.com/watch?v=j6rF0_3s4tE'
+    youtubeId: '3xjpx8-2gD0',
+    videoUrl: 'https://www.youtube.com/watch?v=3xjpx8-2gD0'
   },
   {
     id: 'vid-twitch-riot',
@@ -219,7 +219,7 @@ export const VIDEO_CATALOG: VideoPost[] = [
     category: 'Entertainment',
     tags: ['MrBeast', 'Challenge', 'Gaming', 'Squid Game'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/0e3GPea1Tyg/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/0e3GPea1Tyg/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=125',
     description: '456 people compete for $456,000 in the most viral real life challenge game ever made.',
     likes: 18000000,
@@ -229,54 +229,71 @@ export const VIDEO_CATALOG: VideoPost[] = [
   },
   {
     id: 'vid-eldenring-dlc',
-    title: 'Shadow of the Erdtree - All 10 Secret Boss Locations & Lore',
-    author: 'VaatiVidya',
+    title: 'What Boss Order to BEAT the Shadow of the Erdtree DLC ► Elden Ring',
+    author: 'ConCon',
     views: '3.1M',
-    duration: '35:40',
+    duration: '32:37',
     category: 'RPG & Action',
     tags: ['Elden Ring', 'Boss Fight', 'Secrets', 'Action', 'Lore'],
     kidFriendly: false,
-    thumbnail: 'https://img.youtube.com/vi/h8qT1-t-PBs/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/qXKvuRw-4R0/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=110',
     description: 'Detailed walkthrough of the hardest hidden encounters and fragments in the Realm of Shadow.',
     likes: 290000,
     sourceType: 'youtube',
-    youtubeId: 'h8qT1-t-PBs',
-    videoUrl: 'https://www.youtube.com/watch?v=h8qT1-t-PBs'
+    youtubeId: 'qXKvuRw-4R0',
+    videoUrl: 'https://www.youtube.com/watch?v=qXKvuRw-4R0'
   },
   {
     id: 'vid-hardware-build',
-    title: 'Building the Ultimate $2000 Dream Gaming Setup in 2026',
+    title: 'We Built the BEST PC - Ultimate Gaming Setup',
     author: 'Linus Tech Tips',
-    views: '1.8M',
-    duration: '19:40',
+    views: '4.5M',
+    duration: '13:43',
     category: 'Hardware',
     tags: ['PC Build', 'Setup', 'Tech', 'Desk Setup', 'RGB'],
     kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/BL4DCEp7blY/hqdefault.jpg',
+    thumbnail: 'https://i.ytimg.com/vi/X8sgBpmdCT8/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=111',
     description: 'Cable management tricks, ultra-wide OLED monitor, and silent liquid cooling assembly.',
     likes: 145000,
     sourceType: 'youtube',
-    youtubeId: 'BL4DCEp7blY',
-    videoUrl: 'https://www.youtube.com/watch?v=BL4DCEp7blY'
+    youtubeId: 'X8sgBpmdCT8',
+    videoUrl: 'https://www.youtube.com/watch?v=X8sgBpmdCT8'
   },
   {
-    id: 'vid-funny-fails',
-    title: 'Funniest Gaming Fails & Instant Karma Moments of the Month',
-    author: 'BBC News / Gaming',
+    id: 'vid-cs2-launch',
+    title: 'Counter-Strike 2 - Official Launch Trailer & Highlights',
+    author: 'GameSpot',
     views: '5.6M',
     duration: '13:55',
-    category: 'Funny Clips',
-    tags: ['Funny Moments', 'Fails', 'Gaming', 'Highlights', 'Kids'],
-    kidFriendly: true,
-    thumbnail: 'https://img.youtube.com/vi/9y4f_Q28Z_w/hqdefault.jpg',
+    category: 'Esports',
+    tags: ['CS2', 'CounterStrike', 'Esports', 'Highlights', 'FPS'],
+    kidFriendly: false,
+    thumbnail: 'https://i.ytimg.com/vi/c80dVYcL69E/maxresdefault.jpg',
     channelAvatar: 'https://picsum.photos/80/80?random=112',
-    description: 'Hilarious glitches, unexpected physics moments, and team betrayal clips that will make you laugh out loud.',
+    description: 'Dynamic volumetric smokes, sub-tick precision, and upgraded Premier mode gameplay in CS2.',
     likes: 420000,
     sourceType: 'youtube',
-    youtubeId: '9y4f_Q28Z_w',
-    videoUrl: 'https://www.youtube.com/watch?v=9y4f_Q28Z_w'
+    youtubeId: 'c80dVYcL69E',
+    videoUrl: 'https://www.youtube.com/watch?v=c80dVYcL69E'
+  },
+  {
+    id: 'vid-vct-grandfinal',
+    title: 'LOUD vs. VIT — FULL MATCH — VALORANT Champions Shanghai',
+    author: 'VALORANT Champions Tour',
+    views: '1.5M',
+    duration: '2:22:01',
+    category: 'Valorant',
+    tags: ['Valorant', 'VCT', 'Tournament', 'Grand Finals', 'Pro'],
+    kidFriendly: false,
+    thumbnail: 'https://i.ytimg.com/vi/lXdvR5iMU3Y/maxresdefault.jpg',
+    channelAvatar: 'https://picsum.photos/80/80?random=113',
+    description: 'The complete Grand Finals series between LOUD and Team Vitality at VALORANT Champions Shanghai.',
+    likes: 380000,
+    sourceType: 'youtube',
+    youtubeId: 'lXdvR5iMU3Y',
+    videoUrl: 'https://www.youtube.com/watch?v=lXdvR5iMU3Y'
   }
 ];
 
@@ -295,7 +312,44 @@ const DEFAULT_PROFILE: UserTasteProfile = {
     'Building': 10,
     'Kids': 12
   },
+  creatorAffinities: {},
+  lastRefreshTimestamp: 0,
   lastUpdated: new Date().toISOString()
+};
+
+// Storage key for live platform synced video items
+const SYNCED_VIDEOS_STORAGE_KEY = 'nexus_synced_videos_catalog_v2';
+
+// In-memory synced videos loaded from storage
+let SYNCED_VIDEOS: VideoPost[] = [];
+try {
+  const cached = localStorage.getItem(SYNCED_VIDEOS_STORAGE_KEY);
+  if (cached) {
+    SYNCED_VIDEOS = JSON.parse(cached);
+  }
+} catch (e) {
+  SYNCED_VIDEOS = [];
+}
+
+/**
+ * Returns all active catalog videos, fusing static seeds with newly ingested platform streams.
+ */
+export const getAllCatalogVideos = (): VideoPost[] => {
+  const map = new Map<string, VideoPost>();
+  
+  // Seed with base videos
+  VIDEO_CATALOG.forEach(v => {
+    map.set(v.id, v);
+    if (v.youtubeId) map.set(v.youtubeId, v);
+  });
+
+  // Overlay newly synced live videos
+  SYNCED_VIDEOS.forEach(v => {
+    map.set(v.id, v);
+    if (v.youtubeId) map.set(v.youtubeId, v);
+  });
+
+  return Array.from(new Set(map.values()));
 };
 
 export const getUserTasteProfile = (): UserTasteProfile => {
@@ -310,6 +364,8 @@ export const getUserTasteProfile = (): UserTasteProfile => {
         searchHistory: Array.isArray(parsed.searchHistory) ? parsed.searchHistory : [],
         categoryAffinities: parsed.categoryAffinities || {},
         tagAffinities: parsed.tagAffinities || {},
+        creatorAffinities: parsed.creatorAffinities || {},
+        lastRefreshTimestamp: parsed.lastRefreshTimestamp || 0,
         lastUpdated: parsed.lastUpdated || new Date().toISOString()
       };
     }
@@ -332,15 +388,17 @@ export const saveUserTasteProfile = (profile: UserTasteProfile): void => {
 /**
  * Tracks seconds watched of a video.
  * Applies YouTube-style algorithm weights:
- * - Direct watch seconds: 1.5 pts / sec
+ * - Direct watch seconds: 1.6 pts / sec
+ * - Creator affinity: 1.2 pts / sec
  * - Category affinity: 1.0 pt / sec
  * - Tag affinities: 0.8 pt / sec
- * - Completed bonus: +25 pts
+ * - Completed bonus: +30 pts
  */
 export const trackVideoWatch = (videoId: string, secondsWatched: number, completed = false): void => {
   if (secondsWatched <= 0) return;
   const profile = getUserTasteProfile();
-  const video = VIDEO_CATALOG.find(v => v.id === videoId);
+  const allVids = getAllCatalogVideos();
+  const video = allVids.find(v => v.id === videoId || v.youtubeId === videoId);
 
   // Update video duration record
   profile.watchDurations[videoId] = (profile.watchDurations[videoId] || 0) + secondsWatched;
@@ -351,13 +409,18 @@ export const trackVideoWatch = (videoId: string, secondsWatched: number, complet
   if (video) {
     // Update Category Affinity
     if (video.category) {
-      profile.categoryAffinities[video.category] = (profile.categoryAffinities[video.category] || 0) + (secondsWatched * 1.0) + (completed ? 25 : 0);
+      profile.categoryAffinities[video.category] = (profile.categoryAffinities[video.category] || 0) + (secondsWatched * 1.0) + (completed ? 30 : 0);
     }
     // Update Tag Affinities
     if (video.tags) {
       video.tags.forEach(tag => {
         profile.tagAffinities[tag] = (profile.tagAffinities[tag] || 0) + (secondsWatched * 0.8) + (completed ? 15 : 0);
       });
+    }
+    // Update Creator Affinity
+    if (video.author) {
+      if (!profile.creatorAffinities) profile.creatorAffinities = {};
+      profile.creatorAffinities[video.author] = (profile.creatorAffinities[video.author] || 0) + (secondsWatched * 1.2) + (completed ? 25 : 0);
     }
   }
 
@@ -366,23 +429,28 @@ export const trackVideoWatch = (videoId: string, secondsWatched: number, complet
 
 /**
  * Tracks when a user likes or unlikes a video.
- * Gives massive positive signal to video, its category, and its tags.
+ * Gives massive positive signal to video, creator channel, its category, and tags.
  */
 export const trackVideoLike = (videoId: string, isLiked: boolean): void => {
   const profile = getUserTasteProfile();
-  const video = VIDEO_CATALOG.find(v => v.id === videoId);
+  const allVids = getAllCatalogVideos();
+  const video = allVids.find(v => v.id === videoId || v.youtubeId === videoId);
 
   const set = new Set(profile.likedVideoIds);
   if (isLiked) {
     set.add(videoId);
     if (video) {
       if (video.category) {
-        profile.categoryAffinities[video.category] = (profile.categoryAffinities[video.category] || 0) + 40;
+        profile.categoryAffinities[video.category] = (profile.categoryAffinities[video.category] || 0) + 45;
       }
       if (video.tags) {
         video.tags.forEach(tag => {
           profile.tagAffinities[tag] = (profile.tagAffinities[tag] || 0) + 20;
         });
+      }
+      if (video.author) {
+        if (!profile.creatorAffinities) profile.creatorAffinities = {};
+        profile.creatorAffinities[video.author] = (profile.creatorAffinities[video.author] || 0) + 60;
       }
     }
   } else {
@@ -393,31 +461,35 @@ export const trackVideoLike = (videoId: string, isLiked: boolean): void => {
 };
 
 /**
- * Records a search term into search history and immediately boosts tag affinities matching keywords.
+ * Records a search term into search history and immediately boosts tag and creator affinities.
  */
 export const trackSearch = (query: string): void => {
   const trimmed = query.trim().toLowerCase();
   if (!trimmed || trimmed.length < 2) return;
 
   const profile = getUserTasteProfile();
-  // Keep last 15 searches
   const filtered = profile.searchHistory.filter(q => q.toLowerCase() !== trimmed);
   profile.searchHistory = [trimmed, ...filtered].slice(0, 15);
 
-  // Boost any category or tags mentioned in query
-  VIDEO_CATALOG.forEach(video => {
+  const allVids = getAllCatalogVideos();
+  allVids.forEach(video => {
     const titleMatch = video.title.toLowerCase().includes(trimmed);
     const catMatch = video.category?.toLowerCase().includes(trimmed);
+    const authorMatch = video.author.toLowerCase().includes(trimmed);
     const tagMatch = video.tags?.some(t => t.toLowerCase().includes(trimmed));
 
-    if (titleMatch || catMatch || tagMatch) {
+    if (titleMatch || catMatch || authorMatch || tagMatch) {
       if (video.category) {
-        profile.categoryAffinities[video.category] = (profile.categoryAffinities[video.category] || 0) + 15;
+        profile.categoryAffinities[video.category] = (profile.categoryAffinities[video.category] || 0) + 18;
+      }
+      if (video.author) {
+        if (!profile.creatorAffinities) profile.creatorAffinities = {};
+        profile.creatorAffinities[video.author] = (profile.creatorAffinities[video.author] || 0) + 25;
       }
       if (video.tags) {
         video.tags.forEach(t => {
           if (t.toLowerCase().includes(trimmed)) {
-            profile.tagAffinities[t] = (profile.tagAffinities[t] || 0) + 20;
+            profile.tagAffinities[t] = (profile.tagAffinities[t] || 0) + 22;
           }
         });
       }
@@ -436,10 +508,83 @@ export const resetRecommendationHistory = (): void => {
 };
 
 /**
- * Computes personalized recommendations ranking using the multi-signal algorithm.
+ * Performs a live synchronization with YouTube and platform creators via the server proxy.
+ * Ingests authentic new videos immediately into the catalog.
  */
-export const getPersonalizedRecommendations = (limit = 12, isJuniorMode = false): ScoredVideo[] => {
+export const syncFreshPlatformVideos = async (isJuniorMode = false): Promise<VideoPost[]> => {
+  try {
+    const profile = getUserTasteProfile();
+    const topCategories = Object.entries(profile.categoryAffinities)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([cat]) => cat);
+
+    const recentSearches = profile.searchHistory.slice(0, 2);
+
+    const response = await fetch('/api/sync-feed', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        categories: topCategories,
+        searchTopics: recentSearches,
+        juniorMode: isJuniorMode,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const newVideos: VideoPost[] = Array.isArray(data.videos) ? data.videos : [];
+
+      if (newVideos.length > 0) {
+        // Merge with existing synced videos
+        const existingIds = new Set(SYNCED_VIDEOS.map(v => v.youtubeId || v.id));
+        const filteredNew = newVideos.filter(v => v.youtubeId && !existingIds.has(v.youtubeId));
+
+        SYNCED_VIDEOS = [...filteredNew, ...SYNCED_VIDEOS].slice(0, 40);
+        try {
+          localStorage.setItem(SYNCED_VIDEOS_STORAGE_KEY, JSON.stringify(SYNCED_VIDEOS));
+        } catch (e) {}
+
+        // Populate metadata cache so projector immediately recognizes them
+        filteredNew.forEach(v => {
+          if (v.youtubeId) {
+            METADATA_CACHE.set(v.youtubeId, {
+              title: v.title,
+              author: v.author,
+              thumbnail: `https://img.youtube.com/vi/${v.youtubeId}/maxresdefault.jpg`,
+              category: v.category,
+            });
+          }
+        });
+
+        profile.lastRefreshTimestamp = Date.now();
+        saveUserTasteProfile(profile);
+      }
+
+      return newVideos;
+    }
+  } catch (err) {
+    console.warn('syncFreshPlatformVideos error:', err);
+  }
+  return [];
+};
+
+/**
+ * Computes personalized recommendations ranking using the multi-signal algorithm.
+ * Incorporates:
+ * - Direct watch duration
+ * - Completed views
+ * - Explicit likes
+ * - Creator channel affinities
+ * - Category affinities
+ * - Tag affinities
+ * - Search keyword matching
+ * - Fresh upload signals
+ * - Subtle exploratory random variation for fresh YouTube-like shuffling on refresh
+ */
+export const getPersonalizedRecommendations = (limit = 12, isJuniorMode = false, withExploration = true): ScoredVideo[] => {
   const profile = getUserTasteProfile();
+  const allCatalog = getAllCatalogVideos();
 
   // Find top categories & tags for reason badge generation
   const sortedCategories = Object.entries(profile.categoryAffinities)
@@ -450,7 +595,11 @@ export const getPersonalizedRecommendations = (limit = 12, isJuniorMode = false)
     .sort((a, b) => b[1] - a[1]);
   const topTag = sortedTags.length > 0 ? sortedTags[0][0] : 'Building';
 
-  const scored: ScoredVideo[] = VIDEO_CATALOG.map(video => {
+  const sortedCreators = Object.entries(profile.creatorAffinities || {})
+    .sort((a, b) => b[1] - a[1]);
+  const topCreator = sortedCreators.length > 0 ? sortedCreators[0][0] : null;
+
+  const scored: ScoredVideo[] = allCatalog.map(video => {
     // Junior Mode Filter: non-kid-friendly videos receive heavy penalty or are excluded
     if (isJuniorMode && video.kidFriendly === false) {
       return {
@@ -466,25 +615,30 @@ export const getPersonalizedRecommendations = (limit = 12, isJuniorMode = false)
     let score = 50; // Base prior
 
     // 1. Direct watch time signal
-    const watchSec = profile.watchDurations[video.id] || 0;
-    score += watchSec * 1.5;
+    const watchSec = profile.watchDurations[video.id] || (video.youtubeId ? profile.watchDurations[video.youtubeId] || 0 : 0);
+    score += watchSec * 1.6;
 
     // 2. Completed views
-    const completedCount = profile.completedVideos[video.id] || 0;
-    score += completedCount * 30;
+    const completedCount = profile.completedVideos[video.id] || (video.youtubeId ? profile.completedVideos[video.youtubeId] || 0 : 0);
+    score += completedCount * 35;
 
     // 3. User Likes
-    const isLiked = profile.likedVideoIds.includes(video.id);
+    const isLiked = profile.likedVideoIds.includes(video.id) || (video.youtubeId ? profile.likedVideoIds.includes(video.youtubeId) : false);
     if (isLiked) {
-      score += 65;
+      score += 75;
     }
 
-    // 4. Category affinity
+    // 4. Creator affinity
+    if (video.author && profile.creatorAffinities && profile.creatorAffinities[video.author]) {
+      score += profile.creatorAffinities[video.author] * 1.5;
+    }
+
+    // 5. Category affinity
     if (video.category && profile.categoryAffinities[video.category]) {
       score += profile.categoryAffinities[video.category] * 1.8;
     }
 
-    // 5. Tag affinities
+    // 6. Tag affinities
     if (video.tags) {
       video.tags.forEach(tag => {
         if (profile.tagAffinities[tag]) {
@@ -493,27 +647,42 @@ export const getPersonalizedRecommendations = (limit = 12, isJuniorMode = false)
       });
     }
 
-    // 6. Search keyword matching
+    // 7. Search keyword matching
     profile.searchHistory.forEach((q, idx) => {
-      const recencyMultiplier = Math.max(0.5, 1 - idx * 0.1);
+      const recencyMultiplier = Math.max(0.4, 1 - idx * 0.1);
       const titleHit = video.title.toLowerCase().includes(q);
       const catHit = video.category?.toLowerCase().includes(q);
+      const authorHit = video.author.toLowerCase().includes(q);
       const tagHit = video.tags?.some(t => t.toLowerCase().includes(q));
 
-      if (titleHit || catHit || tagHit) {
-        score += 35 * recencyMultiplier;
+      if (titleHit || catHit || authorHit || tagHit) {
+        score += 40 * recencyMultiplier;
       }
     });
 
-    // 7. Junior Mode boost for kid-friendly content
+    // 8. Fresh upload boost (from live sync)
+    if (video.isFreshUpload) {
+      score += 45;
+    }
+
+    // 9. Junior Mode boost for kid-friendly content
     if (isJuniorMode && video.kidFriendly) {
       score += 120;
     }
 
-    // Determine intuitive reason badge
+    // 10. YouTube-style serendipity/exploratory jitter (makes refresh feel alive with fresh video variants)
+    if (withExploration) {
+      score += Math.random() * 18;
+    }
+
+    // Determine intuitive, gamer-focused reason badge
     let reasonBadge = '🔥 Recommended';
     if (isLiked) {
-      reasonBadge = '❤️ Because you liked this';
+      reasonBadge = `❤️ Because you liked ${video.author}`;
+    } else if (video.isFreshUpload) {
+      reasonBadge = `⚡ Fresh Upload from ${video.author}`;
+    } else if (topCreator && video.author === topCreator && (profile.creatorAffinities?.[topCreator] || 0) > 15) {
+      reasonBadge = `🌟 Top Creator: ${video.author}`;
     } else if (profile.searchHistory.some(q => video.title.toLowerCase().includes(q) || video.tags?.some(t => t.toLowerCase().includes(q)))) {
       const matchedQuery = profile.searchHistory.find(q => video.title.toLowerCase().includes(q) || video.tags?.some(t => t.toLowerCase().includes(q)));
       reasonBadge = `🔍 Matches "${matchedQuery}"`;
@@ -527,8 +696,8 @@ export const getPersonalizedRecommendations = (limit = 12, isJuniorMode = false)
       reasonBadge = '⭐ Top Pick for Junior Mode';
     }
 
-    // Calculate human-friendly match % between 72% and 99%
-    const normalizedScore = Math.min(100, Math.max(72, Math.round(72 + Math.log10(Math.max(1, score)) * 10)));
+    // Calculate human-friendly match % between 74% and 99%
+    const normalizedScore = Math.min(99, Math.max(74, Math.round(74 + Math.log10(Math.max(1, score)) * 9)));
     const matchPercentage = Math.min(99, normalizedScore);
 
     return {
@@ -613,7 +782,7 @@ VIDEO_CATALOG.forEach(v => {
     METADATA_CACHE.set(v.youtubeId, {
       title: v.title,
       author: v.author,
-      thumbnail: `https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`,
+      thumbnail: `https://img.youtube.com/vi/${v.youtubeId}/maxresdefault.jpg`,
       category: v.category,
     });
   }
@@ -654,7 +823,7 @@ export function createProjectedVideo(
         : 'Custom Stream Video');
 
   const thumbnail = cached?.thumbnail || (isYouTube 
-    ? `https://img.youtube.com/vi/${idOrChannel}/hqdefault.jpg`
+    ? `https://img.youtube.com/vi/${idOrChannel}/maxresdefault.jpg`
     : isTwitch
       ? `https://static-cdn.jtvnw.net/previews-ttv/live_user_${idOrChannel.toLowerCase()}-1280x720.jpg`
       : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop');
@@ -751,12 +920,12 @@ export async function resolveStreamMetadata(
 
 /**
  * Returns the authentic thumbnail for any video.
- * For YouTube, guarantees the official HQ thumbnail: https://img.youtube.com/vi/{id}/hqdefault.jpg
+ * For YouTube, guarantees the official HQ thumbnail: https://img.youtube.com/vi/{id}/maxresdefault.jpg
  * For Twitch, guarantees the official live preview image.
  */
 export function getVideoThumbnail(video: { thumbnail?: string; youtubeId?: string; sourceType?: string; twitchChannel?: string }): string {
   if (video.youtubeId) {
-    return `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+    return `https://i.ytimg.com/vi/${video.youtubeId}/maxresdefault.jpg`;
   }
   if (video.sourceType === 'twitch' && video.twitchChannel) {
     return `https://static-cdn.jtvnw.net/previews-ttv/live_user_${video.twitchChannel.toLowerCase()}-1280x720.jpg`;

@@ -14,6 +14,9 @@ export interface GamingTask {
   xp: number;
   completed: boolean;
   type: 'daily' | 'weekly';
+  category?: 'Daily Login' | 'Social Engagement' | 'Stream Performance';
+  coins?: number;
+  description?: string;
 }
 
 export interface VideoPost {
@@ -35,6 +38,8 @@ export interface VideoPost {
   youtubeId?: string;
   twitchChannel?: string;
   isLive?: boolean;
+  isFreshUpload?: boolean;
+  syncTimestamp?: number;
 }
 
 export interface ScoredVideo extends VideoPost {
@@ -43,6 +48,8 @@ export interface ScoredVideo extends VideoPost {
   reasonBadge: string;
   userWatchDuration: number;
   isLikedByUser: boolean;
+  isFreshUpload?: boolean;
+  syncTimestamp?: number;
 }
 
 export interface CreatorChannel {
@@ -70,6 +77,8 @@ export interface UserTasteProfile {
   searchHistory: string[];
   categoryAffinities: Record<string, number>; // category -> points
   tagAffinities: Record<string, number>; // tag -> points
+  creatorAffinities?: Record<string, number>; // creator channel name -> points
+  lastRefreshTimestamp?: number;
   lastUpdated: string;
 }
 

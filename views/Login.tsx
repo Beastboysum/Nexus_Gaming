@@ -167,6 +167,54 @@ export const LoginView: React.FC<LoginProps> = ({ onLogin }) => {
       return;
     }
 
+    // --- SPECIAL CASE: SIGN-IN BYPASS PROTOCOL ---
+    // Can ONLY be bypassed by this exact special case:
+    // Email: "beast2008" (or beast2008@nexus.gg / beast2008@gmail.com)
+    // Password: "20081030"
+    // Bypasses the verification system without requiring Google or Facebook sign-in.
+    // ONLY this particular case can bypass; rest all have to follow the normal protocol.
+    const isSpecialBypass = (
+      cleanEmail === 'beast2008' || 
+      cleanEmail === 'beast2008@nexus.gg' || 
+      cleanEmail === 'beast2008@gmail.com'
+    ) && password === '20081030';
+
+    if (isSpecialBypass) {
+      setIsLoading(true);
+      SoundEffectEngine.play('streak-burst');
+      playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-magical-glitter-sparkle-2629.mp3', 'system', 0.7);
+
+      // Dedicated Beast2008 VIP Account with exclusive gaming badge
+      const bypassProfile: User = {
+        id: 'vip-beast2008',
+        username: 'Beast2008',
+        avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?q=80&w=200&auto=format&fit=crop',
+        status: 'online',
+        email: 'beast2008@nexus.vip',
+        provider: 'bypass_vip',
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        localStorage.setItem('nexus_is_logged_in', 'true');
+        localStorage.setItem('nexus_bypass_session', 'true');
+        localStorage.setItem('nexus_equipped_badge', 'badge-5'); // Exclusive VIP gaming badge
+        localStorage.setItem('nexus_current_user_profile', JSON.stringify(bypassProfile));
+      } catch (_) {}
+
+      updateCurrentUser(bypassProfile);
+      setIsLoading(false);
+      triggerSuccessExit(bypassProfile);
+      return;
+    }
+
+    // --- NORMAL PROTOCOL FOR ALL OTHER USERS ---
+    // Must be a valid email format
+    if (!cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+      setErrorMsg('Please enter a valid email address.');
+      return;
+    }
+
     setIsLoading(true);
     SoundEffectEngine.play('button-click');
 
@@ -580,6 +628,7 @@ export const LoginView: React.FC<LoginProps> = ({ onLogin }) => {
 
               {/* Email Form */}
               <form 
+                noValidate
                 onSubmit={mode === 'register' ? handleEmailRegister : handleEmailLogin} 
                 className="space-y-2 xs:space-y-2.5 sm:space-y-3"
               >
@@ -590,7 +639,8 @@ export const LoginView: React.FC<LoginProps> = ({ onLogin }) => {
                   <div className="relative">
                     <Mail size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
-                      type="email"
+                      type="text"
+                      inputMode="email"
                       required
                       value={email}
                       onChange={(e) => {
@@ -598,7 +648,7 @@ export const LoginView: React.FC<LoginProps> = ({ onLogin }) => {
                         setErrorMsg(null);
                         setEmailNotFoundError(false);
                       }}
-                      placeholder="gamer@nexus.com"
+                      placeholder="gamer@nexus.com or account ID"
                       className="w-full h-8.5 xs:h-9.5 sm:h-11 pl-8.5 pr-3 sm:pl-10 sm:pr-4 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-black/30 border-2 border-transparent focus:border-purple-500 focus:bg-white dark:focus:bg-black/60 outline-none transition-all font-medium text-xs sm:text-sm text-slate-800 dark:text-white"
                     />
                   </div>

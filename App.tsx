@@ -16,6 +16,7 @@ import { MetaPulseView } from './views/MetaPulseView';
 import { ServersView } from './views/Servers';
 import { CallOverlay } from './components/CallOverlay';
 import { DataCleanupService } from './services/DataCleanupService';
+import { CURRENT_USER } from './services/serverService';
 import { 
   getEffectiveVolume, 
   playCategorizedAudio, 
@@ -60,8 +61,15 @@ const NOTIFICATIONS = [
 
 const App: React.FC = () => {
   const [isDark, setIsDark] = useState(true);
-  const [view, setView] = useState<ViewState>('login');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [view, setView] = useState<ViewState>('home');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('nexus_is_logged_in') === 'true';
+    } catch (_) {
+      return false;
+    }
+  });
+  const [currentUser, setCurrentUser] = useState<User>(() => ({ ...CURRENT_USER }));
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedChatFriend, setSelectedChatFriend] = useState<User | null>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -90,9 +98,19 @@ const App: React.FC = () => {
       } catch (_) {}
     };
     window.addEventListener('storage', syncStreak);
+
+    // Sync current user profile updates
+    const handleUserUpdate = (e: any) => {
+      if (e.detail?.user) {
+        setCurrentUser({ ...e.detail.user });
+      }
+    };
+    window.addEventListener('nexus_current_user_updated', handleUserUpdate);
+
     const interval = setInterval(syncStreak, 1500);
     return () => {
       window.removeEventListener('storage', syncStreak);
+      window.removeEventListener('nexus_current_user_updated', handleUserUpdate);
       clearInterval(interval);
     };
   }, []);
@@ -132,12 +150,20 @@ const App: React.FC = () => {
 
   const handleLogin = () => {
     playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-positive-notification-266.mp3', 'system');
+    try {
+      localStorage.setItem('nexus_is_logged_in', 'true');
+    } catch (_) {}
     setIsLoggedIn(true);
     setView('home'); // Default to Home view
   };
 
   const handleLogout = () => {
-      setIsLoggedIn(false);
+    try {
+      localStorage.removeItem('nexus_is_logged_in');
+      localStorage.removeItem('nexus_bypass_session');
+    } catch (_) {}
+    setIsLoggedIn(false);
+    setView('login');
   };
 
   const handleOpenDM = (friend: User) => {
@@ -359,9 +385,13 @@ const App: React.FC = () => {
                 <div 
                   className="w-7 h-7 xs:w-8 xs:h-8 rounded-lg bg-gradient-to-tr from-purple-500 to-blue-500 p-0.5 relative cursor-pointer group shrink-0" 
                   onClick={() => setView('settings')}
-                  title={`Profile Settings - Equipped Badge: ${equippedBadge.title}`}
+                  title={`Profile: ${currentUser.username} - Equipped Badge: ${equippedBadge.title}`}
                 >
-                   <img src="https://picsum.photos/100/100?random=88" className="w-full h-full rounded-[6px] object-cover bg-[#09090b]" alt="Profile" />
+                   <img 
+                     src={currentUser.avatar || "https://picsum.photos/100/100?random=88"} 
+                     className="w-full h-full rounded-[6px] object-cover bg-[#09090b]" 
+                     alt={currentUser.username} 
+                   />
                    {/* Mini Equipped Badge Medallion */}
                    <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-[#121216] border border-orange-500/60 flex items-center justify-center shadow-md">
                       <EquippedBadgeIcon size={8} className={equippedBadge.rarityColor} />

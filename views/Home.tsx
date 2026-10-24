@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Play, Users, Mic, Gamepad2, Plus, X, MessageSquare, Phone, Video, 
   MoreVertical, Shield, User, Trophy, Flame, Check, Star, Rocket, Sparkles,
-  Search, Tv, Radio, CheckCircle2 
+  Search, Tv, Radio, CheckCircle2, History, Trash2, Clock
 } from 'lucide-react';
 import { User as UserType, CreatorChannel, VideoPost } from '../types';
 import { DailyStreakCounter } from '../components/DailyStreakCounter';
@@ -11,10 +11,17 @@ import { MetaPulseWidget } from '../components/MetaPulseWidget';
 import { PersonalizedVideoShelf } from '../components/PersonalizedVideoShelf';
 import { VideoPlayerModal } from '../components/VideoPlayerModal';
 import { ChannelProfileModal } from '../components/ChannelProfileModal';
+import { HDImage } from '../components/HDImage';
 import { searchLocalCreators } from '../services/creatorDirectory';
-import { VIDEO_CATALOG, getVideoThumbnail, trackSearch } from '../services/recommendationEngine';
+import { VIDEO_CATALOG, getAllCatalogVideos, getVideoThumbnail, trackSearch } from '../services/recommendationEngine';
 import { isJuniorModeEnabled } from '../services/juniorModeContext';
 import { playCategorizedAudio } from '../services/audioManager';
+import { 
+  getWatchHistory, 
+  clearWatchHistory, 
+  removeWatchHistoryItem, 
+  WatchHistoryItem 
+} from '../services/videoCacheDb';
 
 interface HomeProps {
     onNavigate: (view: any) => void;
@@ -72,6 +79,43 @@ export const HomeView: React.FC<HomeProps> = ({ onNavigate, onOpenDM, onCall }) 
     const [homeSearch, setHomeSearch] = useState('');
     const [selectedVideo, setSelectedVideo] = useState<VideoPost | null>(null);
     const [selectedChannel, setSelectedChannel] = useState<CreatorChannel | null>(null);
+    const [watchHistory, setWatchHistory] = useState<WatchHistoryItem[]>([]);
+    const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(true);
+
+    const refreshHistory = async () => {
+        try {
+            const items = await getWatchHistory(10);
+            setWatchHistory(items);
+        } catch (e) {
+            console.warn('Failed to load watch history:', e);
+        } finally {
+            setIsLoadingHistory(false);
+        }
+    };
+
+    useEffect(() => {
+        refreshHistory();
+
+        const handleHistoryUpdate = () => {
+            refreshHistory();
+        };
+
+        window.addEventListener('nexus_watch_history_updated', handleHistoryUpdate);
+        return () => window.removeEventListener('nexus_watch_history_updated', handleHistoryUpdate);
+    }, []);
+
+    const handleClearAllHistory = async () => {
+        await clearWatchHistory();
+        setWatchHistory([]);
+        playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3', 'system', 0.4);
+    };
+
+    const handleRemoveHistoryItem = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        await removeWatchHistoryItem(id);
+        setWatchHistory(prev => prev.filter(item => item.id !== id));
+        playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3', 'system', 0.3);
+    };
 
     useEffect(() => {
         setIsJunior(isJuniorModeEnabled());
@@ -93,7 +137,7 @@ export const HomeView: React.FC<HomeProps> = ({ onNavigate, onOpenDM, onCall }) 
 
     const trimmedHomeSearch = homeSearch.trim().toLowerCase();
     const matchedCreators = trimmedHomeSearch ? searchLocalCreators(trimmedHomeSearch, isJunior).slice(0, 3) : [];
-    const matchedVideos = trimmedHomeSearch ? VIDEO_CATALOG.filter(v => {
+    const matchedVideos = trimmedHomeSearch ? getAllCatalogVideos().filter(v => {
         if (isJunior && !v.kidFriendly) return false;
         return v.title.toLowerCase().includes(trimmedHomeSearch) || 
                v.author.toLowerCase().includes(trimmedHomeSearch) ||
@@ -447,15 +491,11 @@ export const HomeView: React.FC<HomeProps> = ({ onNavigate, onOpenDM, onCall }) 
                                             className="group relative rounded-xl xs:rounded-2xl overflow-hidden cursor-pointer bg-[#12131c] border border-white/10 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-1 shadow-lg flex flex-col justify-between"
                                         >
                                             <div className="relative aspect-video w-full overflow-hidden bg-black/60">
-                                                <img
+                                                <HDImage
                                                     src={getVideoThumbnail(video)}
+                                                    youtubeId={video.youtubeId}
                                                     alt={video.title}
                                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                                    onError={(e) => {
-                                                        if (video.youtubeId) {
-                                                            (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
-                                                        }
-                                                    }}
                                                 />
                                                 <div className="absolute bottom-1.5 xs:bottom-2 right-1.5 xs:right-2 px-1.5 xs:px-2 py-0.5 rounded-md bg-black/85 backdrop-blur-md text-white font-mono text-[10px] xs:text-xs font-bold shadow-md">
                                                     {video.duration}
@@ -493,6 +533,115 @@ export const HomeView: React.FC<HomeProps> = ({ onNavigate, onOpenDM, onCall }) 
                     </div>
                 )}
             </section>
+
+            {/* --- WATCH HISTORY SECTION (INDEXEDDB POWERED) --- */}
+            {watchHistory.length > 0 && (
+                <section className="bg-gradient-to-r from-[#12121c] via-[#161426] to-[#12121c] p-4 xs:p-5 sm:p-6 rounded-2xl xs:rounded-3xl border border-purple-500/20 shadow-xl space-y-4">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                                <History size={18} />
+                            </div>
+                            <div>
+                                <h2 className="text-base xs:text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                                    <span>Watch History</span>
+                                    <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">
+                                        {watchHistory.length}
+                                    </span>
+                                </h2>
+                                <p className="text-[11px] xs:text-xs text-slate-400">
+                                    Pick up where you left off • Instant IndexedDB client cache
+                                </p>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleClearAllHistory}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-rose-500/20 border border-white/10 hover:border-rose-500/30 text-xs font-semibold text-slate-400 hover:text-rose-300 transition-colors cursor-pointer"
+                            title="Clear Watch History"
+                        >
+                            <Trash2 size={13} />
+                            <span>Clear History</span>
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
+                        {watchHistory.map((item) => (
+                            <div
+                                key={`history-${item.id}`}
+                                onClick={() => {
+                                    playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-click-901.mp3', 'system', 0.4);
+                                    setSelectedVideo(item.video);
+                                }}
+                                className="group relative rounded-2xl overflow-hidden cursor-pointer bg-[#191924] border border-white/5 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-xl flex flex-col justify-between"
+                            >
+                                <div className="relative aspect-video w-full overflow-hidden bg-black/60">
+                                    <HDImage
+                                        src={item.video.thumbnail || getVideoThumbnail(item.video)}
+                                        youtubeId={item.video.youtubeId}
+                                        alt={item.video.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                    
+                                    {/* Platform Indicator */}
+                                    <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-md text-[9px] font-bold text-red-400 flex items-center gap-1">
+                                        {item.video.sourceType === 'twitch' || item.video.twitchChannel ? (
+                                            <span className="text-purple-400 flex items-center gap-1">
+                                                <Radio size={9} /> Twitch
+                                            </span>
+                                        ) : (
+                                            <span className="text-red-400 flex items-center gap-1">
+                                                <Tv size={9} /> YouTube
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Remove Item Button */}
+                                    <button
+                                        onClick={(e) => handleRemoveHistoryItem(e, item.id)}
+                                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/80 text-slate-400 hover:text-rose-400 hover:bg-black transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+                                        title="Remove from history"
+                                    >
+                                        <X size={12} />
+                                    </button>
+
+                                    {/* Duration badge */}
+                                    <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/85 font-mono text-[10px] font-bold text-white">
+                                        {item.video.duration || 'Video'}
+                                    </div>
+
+                                    {/* Play Overlay */}
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
+                                        <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                            <Play size={16} fill="white" className="ml-0.5" />
+                                        </div>
+                                    </div>
+
+                                    {/* Red Watch Progress Bar like YouTube */}
+                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+                                        <div
+                                            className="h-full bg-red-600 shadow-[0_0_8px_rgba(239,68,68,0.8)]"
+                                            style={{ width: `${Math.max(8, Math.min(100, item.progressPercent || 20))}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="p-3 flex-1 flex flex-col justify-between">
+                                    <h4 className="font-bold text-xs sm:text-sm text-white line-clamp-2 leading-snug group-hover:text-purple-300 transition-colors">
+                                        {item.video.title}
+                                    </h4>
+                                    <div className="mt-2 pt-1.5 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
+                                        <span className="truncate max-w-[120px] font-medium text-slate-300">{item.video.author}</span>
+                                        <span className="flex items-center gap-1 text-[10px] text-purple-300">
+                                            <Clock size={10} /> {new Date(item.watchedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* --- YOUTUBE-STYLE PERSONALIZED RECOMMENDATION SHELF --- */}
             <PersonalizedVideoShelf 

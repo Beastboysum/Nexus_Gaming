@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { playCategorizedAudio } from '../services/audioManager';
 import { MetaPulseResponse } from '../components/MetaPulseWidget';
+import { EsportsPulseChart } from '../components/EsportsPulseChart';
 
 const POPULAR_GAMES = [
   { id: 'valorant', name: 'Valorant', icon: Zap, color: 'text-red-400 border-red-500/30 bg-red-500/10' },
@@ -147,6 +148,9 @@ export const MetaPulseView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Esports Pulse: 24-Hour Live Viewership & Trend Chart */}
+      <EsportsPulseChart />
 
       {/* Select Game Focus */}
       <div className="space-y-3">

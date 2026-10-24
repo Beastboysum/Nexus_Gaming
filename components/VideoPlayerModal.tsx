@@ -16,6 +16,8 @@ import {
 } from '../services/recommendationEngine';
 import { playCategorizedAudio, SoundEffectEngine } from '../services/audioManager';
 import { isJuniorModeEnabled } from '../services/juniorModeContext';
+import { recordWatchHistory, cacheVideo } from '../services/videoCacheDb';
+import { HDImage } from './HDImage';
 
 interface VideoPlayerModalProps {
   video: ScoredVideo | VideoPost | null;
@@ -77,6 +79,10 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     // Initial audio cue
     playCategorizedAudio('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-interface-click-901.mp3', 'system', 0.4);
 
+    // Cache metadata and record initial watch session to IndexedDB
+    cacheVideo(activeVideo);
+    recordWatchHistory(activeVideo, 0, 180);
+
     // If active video has placeholder author or title, resolve authentic creator & title in background
     if (activeVideo.author === 'YouTube Creator' || activeVideo.author === 'Custom Stream' || activeVideo.title.startsWith('YouTube Video [')) {
       const streamInput = activeVideo.youtubeId || activeVideo.videoUrl || (activeVideo.twitchChannel ? `twitch.tv/${activeVideo.twitchChannel}` : '');
@@ -84,7 +90,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
         resolveStreamMetadata(streamInput, isJunior).then(resolved => {
           setActiveVideo(prev => {
             if (!prev || prev.id !== activeVideo.id) return prev;
-            return {
+            const updated = {
               ...prev,
               title: resolved.title,
               author: resolved.author,
@@ -92,6 +98,9 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
               category: resolved.category,
               views: resolved.views,
             };
+            cacheVideo(updated);
+            recordWatchHistory(updated, watchSeconds, 180);
+            return updated;
           });
         }).catch(() => {});
       }
@@ -104,7 +113,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     };
   }, [activeVideo]);
 
-  // Continuously track real watch duration & feed into algorithm while modal is open
+  // Continuously track real watch duration & feed into algorithm & IndexedDB watch history while modal is open
   useEffect(() => {
     if (!activeVideo) {
       if (watchTrackerRef.current) {
@@ -119,6 +128,10 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
         const next = prev + 1;
         // Feed real viewing second into recommendation taste profile
         trackVideoWatch(activeVideo.id, 1, false);
+        // Persist watch progress every 5 seconds
+        if (next % 5 === 0) {
+          recordWatchHistory(activeVideo, next, 180);
+        }
         return next;
       });
     }, 1000);
@@ -144,7 +157,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 
   // Determine media stream type and IDs
   const streamInfo = useMemo(() => {
-    if (!activeVideo) return { type: 'youtube', id: 'W_7LqXj2C70' };
+    if (!activeVideo) return { type: 'youtube', id: '3xjpx8-2gD0' };
 
     // 1. Explicit YouTube ID
     if (activeVideo.youtubeId) {
@@ -178,9 +191,9 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
 
     // Default high-quality YouTube gaming stream
     if (isJunior) {
-      return { type: 'youtube', id: 'W_7LqXj2C70' }; // Minecraft Treehouse
+      return { type: 'youtube', id: 'YiiHhT7NdGk' }; // Farzy Minecraft Hardcore
     }
-    return { type: 'youtube', id: 'j6rF0_3s4tE' }; // TenZ Masterclass
+    return { type: 'youtube', id: '3xjpx8-2gD0' }; // TenZ Masterclass Guide
   }, [activeVideo, isJunior]);
 
   if (!activeVideo) return null;
@@ -574,15 +587,11 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
                 className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 cursor-pointer transition-all group"
               >
                 <div className="relative w-32 sm:w-40 aspect-video rounded-xl overflow-hidden shrink-0 bg-black/40">
-                  <img 
+                  <HDImage 
                     src={getVideoThumbnail(upNext)} 
+                    youtubeId={upNext.youtubeId}
                     alt={upNext.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
-                    onError={(e) => {
-                      if (upNext.youtubeId) {
-                        (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${upNext.youtubeId}/hqdefault.jpg`;
-                      }
-                    }}
                   />
                   <span className="absolute bottom-1 right-1 bg-black/80 text-[10px] px-1.5 py-0.5 rounded text-white font-mono">{upNext.duration}</span>
                   <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -609,7 +618,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
                       className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 cursor-pointer transition-all flex items-center gap-2 group"
                     >
                       <div className="relative w-16 aspect-video rounded-lg overflow-hidden shrink-0">
-                        <img src={v.thumbnail} alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                        <HDImage src={v.thumbnail} youtubeId={v.youtubeId} alt={v.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-xs font-bold text-white truncate group-hover:text-purple-300">{v.title}</p>

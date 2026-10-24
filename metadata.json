@@ -4,5 +4,28 @@
   "requestFramePermissions": [],
   "capabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ],
+  "cpu": "1000m",
+  "memory": "512Mi",
+  "requests": {
+    "cpu": "1000m",
+    "memory": "512Mi"
+  },
+  "limits": {
+    "cpu": "1500m",
+    "memory": "1024Mi"
+  },
+  "resources": {
+    "requests": {
+      "cpu": "1000m",
+      "memory": "512Mi"
+    },
+    "limits": {
+      "cpu": "1500m",
+      "memory": "1024Mi"
+    }
+  }
 }

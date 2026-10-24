@@ -12,11 +12,12 @@ import { PersonalizedVideoShelf } from '../components/PersonalizedVideoShelf';
 import { ChannelProfileModal } from '../components/ChannelProfileModal';
 import { isJuniorModeEnabled } from '../services/juniorModeContext';
 import { 
-  trackSearch, getPersonalizedRecommendations, VIDEO_CATALOG, 
+  trackSearch, getPersonalizedRecommendations, VIDEO_CATALOG, getAllCatalogVideos,
   getVideoThumbnail, parseMediaStreamUrl, createProjectedVideo 
 } from '../services/recommendationEngine';
 import { CREATOR_DIRECTORY, searchLocalCreators } from '../services/creatorDirectory';
 import { ScoredVideo, CreatorChannel, VideoPost } from '../types';
+import { HDImage } from '../components/HDImage';
 
 // --- Mock Data ---
 
@@ -46,14 +47,14 @@ const LIVE_CHANNELS = [
   { 
     id: 'live-tenz', 
     streamer: 'TenZ', 
-    title: 'RANK 1 GRIND! Valorant Radiant Masterclass', 
+    title: 'The VALORANT Ultimate Guide for Beginners !! | SEN TenZ', 
     game: 'Valorant', 
     viewers: '42.5K', 
     tags: ['English', 'Pro', 'FPS'],
     avatar: 'https://picsum.photos/50/50?random=101',
-    thumbnail: 'https://images.unsplash.com/photo-1624138784180-48145465d61f?q=80&w=400&auto=format&fit=crop',
+    thumbnail: 'https://i.ytimg.com/vi/3xjpx8-2gD0/maxresdefault.jpg',
     sourceType: 'youtube',
-    youtubeId: 'j6rF0_3s4tE'
+    youtubeId: '3xjpx8-2gD0'
   },
   { 
     id: 'live-tarik', 
@@ -63,7 +64,7 @@ const LIVE_CHANNELS = [
     viewers: '85.3K', 
     tags: ['Esports', 'Watch Party'],
     avatar: 'https://picsum.photos/50/50?random=103',
-    thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400&auto=format&fit=crop',
+    thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_tarik-1280x720.jpg',
     sourceType: 'twitch',
     twitchChannel: 'tarik'
   },
@@ -75,21 +76,21 @@ const LIVE_CHANNELS = [
     viewers: '68.1K', 
     tags: ['Creative', 'Tournament', 'Kids'],
     avatar: 'https://picsum.photos/50/50?random=104',
-    thumbnail: 'https://images.unsplash.com/photo-1607677914754-58a36d240214?q=80&w=400&auto=format&fit=crop',
+    thumbnail: 'https://static-cdn.jtvnw.net/previews-ttv/live_user_minecraft-1280x720.jpg',
     sourceType: 'twitch',
     twitchChannel: 'minecraft'
   }
 ];
 
 const VIDEOS = [
-  { id: '201', title: 'I Spent 100 Days in Mega Treehouse Minecraft', channel: 'BlockMaster Tim', views: '5.2M', time: '2 days ago', duration: '18:45', thumbnail: 'https://images.unsplash.com/photo-1607677914754-58a36d240214?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=50', sourceType: 'youtube', youtubeId: 'W_7LqXj2C70' },
-  { id: '202', title: 'Escape The Giant Rainbow Lava Obby!', channel: 'RainbowGamer Squad', views: '3.2M', time: '1 day ago', duration: '12:20', thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=51', sourceType: 'youtube', youtubeId: 'kJQP7kiw5Fk' },
-  { id: '203', title: 'Super Mario Wonder - All Hidden Wonder Seeds', channel: 'NintendoNerd Joy', views: '1.9M', time: '3 days ago', duration: '15:10', thumbnail: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=52', sourceType: 'youtube', youtubeId: 'J3_A0-4H-pA' },
-  { id: '204', title: 'Top 50 Satisfying Rocket League Aerial Goals', channel: 'TurboBoost TV', views: '1.5M', time: '4 days ago', duration: '09:50', thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=53', sourceType: 'youtube', youtubeId: 'lq7eB84fX_M' },
-  { id: '205', title: 'Building the Ultimate Dream Gaming Setup 2026', channel: 'SetupWars', views: '1.8M', time: '1 day ago', duration: '19:40', thumbnail: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=54', sourceType: 'youtube', youtubeId: 'BL4DCEp7blY' },
-  { id: '206', title: 'Shadow of the Erdtree - All Secret Boss Locations', channel: 'VaatiVid', views: '3.1M', time: '5 days ago', duration: '35:40', thumbnail: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=55', sourceType: 'youtube', youtubeId: 'h8qT1-t-PBs' },
-  { id: '207', title: 'Minecraft World Record Speedrun Explained', channel: 'SpeedrunCentral', views: '2.8M', time: '2 hours ago', duration: '14:22', thumbnail: 'https://images.unsplash.com/photo-1579202673506-ca3ce28943ef?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=56', sourceType: 'youtube', youtubeId: 'rV3bZl68y1s' },
-  { id: '208', title: 'Funniest Gaming Fails & Instant Karma Moments', channel: 'ClutchKarma', views: '5.6M', time: '3 days ago', duration: '13:55', thumbnail: 'https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=400&auto=format&fit=crop', avatar: 'https://picsum.photos/50/50?random=57', sourceType: 'youtube', youtubeId: '9y4f_Q28Z_w' },
+  { id: '201', title: 'I Built THE ULTIMATE TREE HOUSE in Minecraft Hardcore (#96)', channel: 'Farzy', views: '4.4M', time: '2 days ago', duration: '19:28', thumbnail: 'https://i.ytimg.com/vi/YiiHhT7NdGk/maxresdefault.jpg', avatar: 'https://picsum.photos/50/50?random=50', sourceType: 'youtube', youtubeId: 'YiiHhT7NdGk' },
+  { id: '202', title: "LAVA BARRY'S PRISON RUN Escape In Roblox", channel: 'Lovely Boss', views: '1.6M', time: '1 day ago', duration: '15:03', thumbnail: 'https://i.ytimg.com/vi/R3Eos53EsfE/maxresdefault.jpg', avatar: 'https://picsum.photos/50/50?random=51', sourceType: 'youtube', youtubeId: 'R3Eos53EsfE' },
+  { id: '203', title: 'Super Mario Wonder - All Wonder Flowers', channel: 'packattack04082', views: '1.4M', time: '3 days ago', duration: '1:17:39', thumbnail: 'https://i.ytimg.com/vi/9lvnlGiJGUQ/maxresdefault.jpg', avatar: 'https://picsum.photos/50/50?random=52', sourceType: 'youtube', youtubeId: '9lvnlGiJGUQ' },
+  { id: '204', title: 'ROCKET LEAGUE BEST OF INSANITY (BEST GOALS)', channel: 'ROCKET LEAGUE FX', views: '1.5M', time: '4 days ago', duration: '14:31', thumbnail: 'https://i.ytimg.com/vi/9eOUDbbePII/maxresdefault.jpg', avatar: 'https://picsum.photos/50/50?random=53', sourceType: 'youtube', youtubeId: '9eOUDbbePII' },
+  { id: '205', title: 'We Built the BEST PC - Ultimate Gaming Setup', channel: 'Linus Tech Tips', views: '4.5M', time: '1 day ago', duration: '13:43', thumbnail: 'https://i.ytimg.com/vi/X8sgBpmdCT8/maxresdefault.jpg', avatar: 'https://picsum.photos/50/50?random=54', sourceType: 'youtube', youtubeId: 'X8sgBpmdCT8' },
+  { id: '206', title: 'What Boss Order to BEAT the Shadow of the Erdtree DLC', channel: 'ConCon', views: '3.1M', time: '5 days ago', duration: '32:37', thumbnail: 'https://i.ytimg.com/vi/qXKvuRw-4R0/maxresdefault.jpg', avatar: 'https://picsum.photos/50/50?random=55', sourceType: 'youtube', youtubeId: 'qXKvuRw-4R0' },
+  { id: '207', title: 'Counter-Strike 2 - Official Launch Trailer & Highlights', channel: 'GameSpot', views: '5.6M', time: '2 hours ago', duration: '13:55', thumbnail: 'https://i.ytimg.com/vi/c80dVYcL69E/maxresdefault.jpg', avatar: 'https://picsum.photos/50/50?random=56', sourceType: 'youtube', youtubeId: 'c80dVYcL69E' },
+  { id: '208', title: 'LOUD vs. VIT — FULL MATCH — VALORANT Champions Shanghai', channel: 'VALORANT Champions Tour', views: '1.5M', time: '3 days ago', duration: '2:22:01', thumbnail: 'https://i.ytimg.com/vi/lXdvR5iMU3Y/maxresdefault.jpg', avatar: 'https://picsum.photos/50/50?random=57', sourceType: 'youtube', youtubeId: 'lXdvR5iMU3Y' },
 ];
 
 export const BrowseView: React.FC = () => {
@@ -282,8 +283,8 @@ export const BrowseView: React.FC = () => {
     video.channel.toLowerCase().includes(trimmedSearch)
   );
 
-  // Search through global VIDEO_CATALOG
-  const catalogFilteredVideos = VIDEO_CATALOG.filter(video => {
+  // Search through global catalog including freshly synced platform uploads
+  const catalogFilteredVideos = getAllCatalogVideos().filter(video => {
     if (isJunior && !video.kidFriendly) return false;
     const titleHit = video.title.toLowerCase().includes(trimmedSearch);
     const authorHit = video.author.toLowerCase().includes(trimmedSearch);
@@ -801,15 +802,11 @@ export const BrowseView: React.FC = () => {
                             >
                               {/* Authentic Original YouTube Thumbnail */}
                               <div className="relative aspect-video w-full overflow-hidden bg-black/60">
-                                <img
+                                <HDImage
                                   src={getVideoThumbnail(video)}
+                                  youtubeId={video.youtubeId}
                                   alt={video.title}
                                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                  onError={(e) => {
-                                    if (video.youtubeId) {
-                                      (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
-                                    }
-                                  }}
                                 />
 
                                 {/* Duration Badge */}
